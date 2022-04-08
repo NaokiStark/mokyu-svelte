@@ -4,6 +4,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
+import replace from 'rollup-plugin-replace';
+import sveltePreprocess from 'svelte-preprocess'
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -41,7 +43,13 @@ export default {
 			compilerOptions: {
 				// enable run-time checks when not in production
 				dev: !production
-			}
+			},
+			preprocess: sveltePreprocess({
+				sourceMap: !production,
+				postcss: {
+					plugins: [require('tailwindcss')(), require('autoprefixer')()],
+				},
+			}),
 		}),
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
@@ -57,7 +65,9 @@ export default {
 			dedupe: ['svelte']
 		}),
 		commonjs(),
-
+		replace({
+			'bkndloc': production ? '//mokyu.fabi.pw/api/' : '//localhost/onics/api/'
+		}),
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
 		!production && serve(),
