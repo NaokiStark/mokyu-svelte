@@ -1,5 +1,6 @@
 <script>
     import Gicon from "./gicon.svelte";
+    import { link } from "svelte-navigator";
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -19,7 +20,12 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">
+                    <a
+                        use:link
+                        class="nav-link active"
+                        aria-current="page"
+                        href="/"
+                    >
                         <Gicon icon="home" /> Mi
                     </a>
                 </li>
@@ -43,12 +49,14 @@
         </form>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-md-1 ugly-fix">
             <li class="nav-item">
-                <a class="btn btn-primary" href="#">
+                <a use:link class="btn btn-primary" href="register">
                     <Gicon icon="person_add_alt_1" /> Registro
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="#"> Ingresar </a>
+                <a use:link class="nav-link text-white" href="login">
+                    Ingresar
+                </a>
             </li>
         </ul>
     </div>

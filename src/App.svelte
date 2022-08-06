@@ -1,4 +1,5 @@
 <script>
+	import { Router, Link, Route } from "svelte-navigator";
 	import Header from "./components/header.svelte";
 	import Login from "./routes/login.svelte";
 	import Mi from "./routes/mi.svelte";
@@ -28,19 +29,21 @@
 		rel="stylesheet"
 	/>
 </svelte:head>
+<Router>
+	<Header />
+	<main class="container-fluid mx-0 px-0">
+		<Route path="/">
+			<Mi />
+		</Route>
+		<Route path="login">
+			<Login />
+		</Route>
 
-<Header />
-<main class="container-fluid mx-0 px-0">
-	{#if site == "index"}
-		<Mi />
-	{/if}
-	{#if site == "login"}
-		<Login />
-	{/if}
-	{#if site == "register"}
-		<Register />
-	{/if}
-</main>
+		<Route path="register">
+			<Register />
+		</Route>
+	</main>
+</Router>
 
 <style>
 	.avatar {
