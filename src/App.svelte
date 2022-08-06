@@ -1,6 +1,10 @@
 <script>
 	import Header from "./components/header.svelte";
+	import Login from "./routes/login.svelte";
 	import Mi from "./routes/mi.svelte";
+	import Register from "./routes/register.svelte";
+
+	let site = "register";
 </script>
 
 <svelte:head>
@@ -26,54 +30,16 @@
 </svelte:head>
 
 <Header />
-
-<main class="container-fluid">
-	<div class="row">
-		<div class="col-md-3">
-			<!-- sidebar -->
-			<div class="card mt-2">
-				<div class="card-header d-flex">
-					<img
-						src="http://localhost/onics/uploads/1-1567136449_avatar.png"
-						alt="Nekita's avatar"
-						class="avatar rounded-circle mr-2"
-					/>
-					<div class="d-flex flex-column">
-						<span class="user-info">Nekita</span>
-						<small class="date">8.500 puntos</small>
-					</div>
-				</div>
-				<div class="card-body">
-					<p class="card-text">
-						Lorem ipsum, dolor sit amet consectetur adipisicing
-						elit. Debitis saepe dolorem facere numquam, optio, nobis
-						corrupti minima sit officiis mollitia nemo ut maiores
-						ipsa modi quo vel quam sapiente delectus.
-					</p>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<Mi />
-		</div>
-		<div class="col-md-3">
-			<div class="card mt-2">
-				<div class="card-header">
-					<h5>Esto no es Embers</h5>
-				</div>
-				<div class="card-body">
-					<ul>
-						<li>Ya lo dije</li>
-						<li>Embers no va a volver</li>
-						<li>Mokyu va a volver</li>
-						<li>Mokyu va a cambiar de nombre?</li>
-						<li>Es todo un misterio</li>
-						<li>Tomatela te dije</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
+<main class="container-fluid mx-0 px-0">
+	{#if site == "index"}
+		<Mi />
+	{/if}
+	{#if site == "login"}
+		<Login />
+	{/if}
+	{#if site == "register"}
+		<Register />
+	{/if}
 </main>
 
 <style>
@@ -107,5 +73,18 @@
 	}
 	:global(.cursor-pointer) {
 		cursor: pointer !important;
+	}
+	:global(form.login, form.register) {
+		border: 1px solid #6c757d;
+		padding: 2em;
+		border-radius: 5px;
+	}
+	:global(body) {
+		background: url(/pics/20364222.jpg) no-repeat;
+		background-size: cover;
+		background-position: center;
+	}
+	:global(body, html) {
+		height: 100%;
 	}
 </style>
