@@ -49,12 +49,12 @@
         </form>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-md-1 ugly-fix">
             <li class="nav-item">
-                <a use:link class="btn btn-primary" href="register">
+                <a use:link class="btn btn-primary" href="/register">
                     <Gicon icon="person_add_alt_1" /> Registro
                 </a>
             </li>
             <li class="nav-item">
-                <a use:link class="nav-link text-white" href="login">
+                <a use:link class="nav-link text-white" href="/login">
                     Ingresar
                 </a>
             </li>

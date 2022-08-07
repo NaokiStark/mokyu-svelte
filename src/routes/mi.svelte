@@ -1,17 +1,50 @@
 <script>
     import FeedList from "../components/feedList.svelte";
+    import { fly } from "svelte/transition";
+    import { api_request } from "../api.js";
+    import { onMount } from "svelte";
+
     let feedList = {
         info: { page: 0 },
-        data: [
-            { body: "helo test" },
-            { body: "helo test" },
-            { body: "helo test" },
-            { body: "helo test" },
-        ],
+        data: null /*[
+            
+            {
+                id: "617",
+                userid: "1",
+                text: "hola",
+                attachment: "",
+                attachment_type: "0",
+                via_id: "0",
+                parent_id: "0",
+                created: "2022-07-02 03:35:47",
+                status: "0",
+                wall: "0",
+                loves: "0",
+                nsfw: "0",
+                sticky: "0",
+                user: "Nekita",
+                avatar: "http://localhost/onics/uploads/1-1567136449_avatar.png",
+                reshoutby: null,
+                reshoutavatar: null,
+                anonexp: "0000-00-00 00:00:00",
+                anonexpr: null,
+                comments_count: "1",
+                elapsed: "hace 1 mes",
+                url: "9X",
+            },
+        ],*/,
     };
+
+    $: get_publico().then((x) => {
+        feedList.data = x.data;
+    });
+
+    function get_publico() {
+        return api_request("publico");
+    }
 </script>
 
-<div class="row row mx-0">
+<div class="row row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
     <div class="col-md-3">
         <!-- sidebar -->
         <div class="card mt-2">

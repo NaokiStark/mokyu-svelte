@@ -3,6 +3,7 @@
 	import Header from "./components/header.svelte";
 	import Login from "./routes/login.svelte";
 	import Mi from "./routes/mi.svelte";
+	import MiSingle from "./routes/mi_single.svelte";
 	import Register from "./routes/register.svelte";
 
 	let site = "register";
@@ -41,6 +42,9 @@
 
 		<Route path="register">
 			<Register />
+		</Route>
+		<Route path="shout/:id" let:params>
+			<MiSingle shout_id={params.id} />
 		</Route>
 	</main>
 </Router>
@@ -83,7 +87,7 @@
 		border-radius: 5px;
 	}
 	:global(body) {
-		background: url(/pics/20364222.jpg) no-repeat;
+		background: url(/pics/20364222.jpg) no-repeat fixed;
 		background-size: cover;
 		background-position: center;
 	}

@@ -1,4 +1,8 @@
-<div class="row mx-0">
+<script>
+    import { fly } from "svelte/transition";
+</script>
+
+<div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
     <div class="col-xxl-3" />
     <div class="col-xxl-6 text-center pt-5 mx-0 px-0">
         <h3>Bienvenido a embe... mokyu?</h3>
