@@ -4,6 +4,8 @@
     import { fly, fade } from "svelte/transition";
     import { api_request } from "../api.js";
     import CommentsList from "../components/commentsList.svelte";
+    import { Body } from "svelte-body"; // weird
+    import { link } from "svelte-navigator";
 
     export let shout_id = 0;
 
@@ -18,6 +20,13 @@
     }
 </script>
 
+{#if item}
+    {#if item.background}
+        <Body
+            style=" background: url('{item.background}') no-repeat fixed;background-size: cover;background-position: center;"
+        />
+    {/if}
+{/if}
 <div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
     <div class="col-lg-1" />
     <div class="col-lg-6 mt-2 mx-0 px-0">
@@ -39,19 +48,29 @@
                     style="background-image: url('{item.cover}')"
                 >
                     <div class="d-flex flex-row card-user-info">
-                        <img
-                            src={item.avatar
-                                ? item.avatar
-                                : "http://localhost/onics/style/default.png"}
-                            alt="Avatar de {item.user}"
-                            class="avatar rounded-circle mr-2"
-                            on:error={function () {
-                                this.src =
-                                    "http://localhost/onics/style/default.png";
-                            }}
-                        />
+                        <a class="text-white" use:link href="/{item.user}">
+                            <img
+                                src={item.avatar
+                                    ? item.avatar
+                                    : "http://localhost/onics/style/default.png"}
+                                alt="Avatar de {item.user}"
+                                class="avatar rounded-circle mr-2"
+                                on:error={function () {
+                                    this.src =
+                                        "http://localhost/onics/style/default.png";
+                                }}
+                            />
+                        </a>
                         <div class="d-flex flex-column">
-                            <span class="user-info"><b>{item.user}</b></span>
+                            <span class="user-info">
+                                <a
+                                    class="text-white"
+                                    use:link
+                                    href="/{item.user}"
+                                >
+                                    <b>{item.user}</b>
+                                </a></span
+                            >
                             <small class="name">{item.rank} karma</small>
                         </div>
                     </div>

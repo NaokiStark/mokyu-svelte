@@ -5,7 +5,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Mokyu</a>
+        <a use:link class="navbar-brand" href="/">Emburns</a>
         <button
             class="navbar-toggler"
             type="button"

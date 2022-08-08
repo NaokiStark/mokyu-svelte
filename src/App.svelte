@@ -5,8 +5,11 @@
 	import Mi from "./routes/mi.svelte";
 	import MiSingle from "./routes/mi_single.svelte";
 	import Register from "./routes/register.svelte";
-
+	import Profile from "./routes/profile.svelte";
+	import { Body } from "svelte-body"; // weird
 	let site = "register";
+
+	let site_background = "url('/pics/20364222.jpg') no-repeat fixed";
 </script>
 
 <svelte:head>
@@ -30,21 +33,37 @@
 		rel="stylesheet"
 	/>
 </svelte:head>
+
 <Router>
 	<Header />
 	<main class="container-fluid mx-0 px-0">
 		<Route path="/">
+			<!-- more weirdest-->
+			<Body
+				style="background: {site_background};background-size: cover;background-position: center;"
+			/>
 			<Mi />
 		</Route>
 		<Route path="login">
+			<!-- more weirdest-->
+			<Body
+				style="background: {site_background};background-size: cover;background-position: center;"
+			/>
 			<Login />
 		</Route>
 
 		<Route path="register">
+			<!-- more weirdest-->
+			<Body
+				style="background: {site_background};background-size: cover;background-position: center;"
+			/>
 			<Register />
 		</Route>
 		<Route path="shout/:id" let:params>
 			<MiSingle shout_id={params.id} />
+		</Route>
+		<Route path="/:id" let:params>
+			<Profile username={params.id} />
 		</Route>
 	</main>
 </Router>
@@ -87,7 +106,7 @@
 		border-radius: 5px;
 	}
 	:global(body) {
-		background: url(/pics/20364222.jpg) no-repeat fixed;
+		/*background: url(/pics/20364222.jpg) no-repeat fixed;*/
 		background-size: cover;
 		background-position: center;
 	}

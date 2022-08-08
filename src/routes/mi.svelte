@@ -6,33 +6,7 @@
 
     let feedList = {
         info: { page: 0 },
-        data: null /*[
-            
-            {
-                id: "617",
-                userid: "1",
-                text: "hola",
-                attachment: "",
-                attachment_type: "0",
-                via_id: "0",
-                parent_id: "0",
-                created: "2022-07-02 03:35:47",
-                status: "0",
-                wall: "0",
-                loves: "0",
-                nsfw: "0",
-                sticky: "0",
-                user: "Nekita",
-                avatar: "http://localhost/onics/uploads/1-1567136449_avatar.png",
-                reshoutby: null,
-                reshoutavatar: null,
-                anonexp: "0000-00-00 00:00:00",
-                anonexpr: null,
-                comments_count: "1",
-                elapsed: "hace 1 mes",
-                url: "9X",
-            },
-        ],*/,
+        data: null,
     };
 
     $: get_publico().then((x) => {

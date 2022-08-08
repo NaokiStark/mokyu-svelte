@@ -40,19 +40,19 @@
             />
         {/if}
         <div class="d-flex flex-column">
-            <span class="user-info"
-                ><a use:link href="/@{item.user}">{item.user}</a>
+            <span class="user-info">
+                <a use:link href="/{item.user}">{item.user}</a>
                 {#if item.reshoutby}
                     <small>
-                        compartió de <a use:link href="/@{item.reshoutby}"
+                        compartió de <a use:link href="/{item.reshoutby}"
                             >{item.reshoutby}</a
                         ></small
                     >
                 {/if}</span
             >
-            <small class="date"
-                ><a use:link href="/shout/{item.id}">{item.elapsed}</a></small
-            >
+            <small class="date">
+                <a use:link href="/shout/{item.id}">{item.elapsed}</a>
+            </small>
         </div>
     </div>
     <div class="card-body">
@@ -61,11 +61,13 @@
             {#if item.attachment_type == 1}
                 <!-- imagen -->
                 <p>
-                    <img
-                        src={item.attachment}
-                        alt=" Imagen de publicada por {item.user}"
-                        class="shout-image"
-                    />
+                    <a use:link href="/shout/{item.id}">
+                        <img
+                            src={item.attachment}
+                            alt=" Imagen de publicada por {item.user}"
+                            class="shout-image"
+                        />
+                    </a>
                 </p>
             {/if}
 
