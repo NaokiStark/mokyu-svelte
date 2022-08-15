@@ -6,7 +6,17 @@
 	import MiSingle from "./routes/mi_single.svelte";
 	import Register from "./routes/register.svelte";
 	import Profile from "./routes/profile.svelte";
+	import { api_request } from "./api.js";
+
 	import { Body } from "svelte-body"; // weird
+	import { onMount } from "svelte";
+
+	let site_config = {};
+	onMount(async () => {
+		site_config = await api_request("site_config");
+		site_config = site_config.data;
+	});
+
 	let site = "register";
 
 	let site_background = "url('/pics/20364222.jpg') no-repeat fixed";
@@ -42,14 +52,14 @@
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
-			<Mi />
+			<Mi {site_config} />
 		</Route>
 		<Route path="login">
 			<!-- more weirdest-->
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
-			<Login />
+			<Login {site_config} />
 		</Route>
 
 		<Route path="register">
@@ -57,13 +67,13 @@
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
-			<Register />
+			<Register {site_config} />
 		</Route>
 		<Route path="shout/:id" let:params>
-			<MiSingle shout_id={params.id} />
+			<MiSingle shout_id={params.id} bind:site_config />
 		</Route>
 		<Route path="/:id" let:params>
-			<Profile username={params.id} />
+			<Profile username={params.id} bind:site_config />
 		</Route>
 	</main>
 </Router>

@@ -3,6 +3,7 @@
     import FeedItemPlaceholder from "./feedItemPlaceholder.svelte";
     import ShareBox from "./shareBox.svelte";
 
+    export let site_config;
     export let feedList = { info: { page: 0 }, data: [] };
     export let options = {
         infinite_scroll: true,
@@ -18,7 +19,7 @@
     {/if}
     {#if feedList.data}
         {#each feedList.data as item}
-            <FeedItem {item} />
+            <FeedItem {item} bind:site_config />
         {/each}
     {:else}
         {#each dumb as dummy}

@@ -1,5 +1,6 @@
 <script>
     import { fly } from "svelte/transition";
+    export let site_config;
 </script>
 
 <div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>

@@ -3,6 +3,7 @@
     import { fly } from "svelte/transition";
     import { api_request } from "../api.js";
     import { onMount } from "svelte";
+    export let site_config;
 
     let feedList = {
         info: { page: 0 },
@@ -21,7 +22,7 @@
 <div class="row row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
     <div class="col-md-3">
         <!-- sidebar -->
-        <div class="card mt-2">
+        <div class="card mt-2 sticky-top">
             <div class="card-header d-flex">
                 <img
                     src="http://localhost/onics/uploads/1-1567136449_avatar.png"
@@ -44,10 +45,10 @@
         </div>
     </div>
     <div class="col-md-6">
-        <FeedList {feedList} />
+        <FeedList {feedList} bind:site_config />
     </div>
     <div class="col-md-3">
-        <div class="card mt-2">
+        <div class="card mt-2 sticky-top">
             <div class="card-header">
                 <h5>Esto no es Embers</h5>
             </div>

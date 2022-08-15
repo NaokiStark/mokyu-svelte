@@ -5,6 +5,7 @@
     import FeedList from "../components/feedList.svelte";
 
     import { Body } from "svelte-body"; // weird
+    export let site_config;
 
     export let username;
 
@@ -61,7 +62,7 @@
             <div class="card mt2">
                 <div
                     class="d-flex flex-column flex-wrap-reverse align-items-end justify-content-end card-header-with-cover"
-                    style="background: linear-gradient( 0deg, #212529 18%, rgba(255, 255, 255, 0) 100% ), url('{item.cover}') no-repeat; background-size:cover; background-position: center;"
+                    style="background: linear-gradient( 0deg, #212529 0%, rgba(255, 255, 255, 0) 37% ), url('{item.cover}') no-repeat; background-size:cover; background-position: center;"
                 >
                     <div class="d-flex flex-row card-user-info">
                         <img
@@ -98,11 +99,10 @@
                                     {/if}
                                 </b>
                             </h3>
-                            <span
-                                ><b>{item.rank_info.fullname}</b>
-                                <small class="name">({item.rank} karma)</small
-                                ></span
-                            >
+                            <span>
+                                <b>{item.rank_info.fullname}</b>
+                                <small class="name">({item.rank} karma) </small>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -131,59 +131,66 @@
                     </div>
                 </div>
             </div>
-            <FeedList {feedList} />
+            <FeedList {feedList} bind:site_config />
         {/if}
     </div>
     <div class="col-lg-3">
-        <div class="card mt-2">
-            <div class="card-header">
-                <Gicon icon="info" /> Información
-            </div>
+        <div class="sticky-top">
+            <div class="card mt-2">
+                <div class="card-header">
+                    <Gicon icon="info" /> Información
+                </div>
 
-            <div class="card-body">
-                {#if user_stats}
-                    <div class="follow-stats d-flex flex-column cursor-default">
-                        <div class="d-flex flex-row justify-content-evenly">
-                            <span>
-                                <Gicon icon="chevron_right" /><b
-                                    >{user_stats.followers.length}</b
-                                > Seguidores
-                            </span>
+                <div class="card-body">
+                    {#if user_stats}
+                        <div
+                            class="follow-stats d-flex flex-column cursor-default"
+                        >
+                            <div class="d-flex flex-row justify-content-evenly">
+                                <span>
+                                    <Gicon icon="chevron_right" /><b
+                                        >{user_stats.followers.length}</b
+                                    > Seguidores
+                                </span>
+                                <span
+                                    ><Gicon icon="chevron_left" /><b
+                                        >{user_stats.follows.length}</b
+                                    > Siguiendo</span
+                                >
+                            </div>
+                            <div class="d-flex flex-row justify-content-center">
+                                <Gicon icon="calendar_month" />&nbsp;Se
+                                unió&nbsp;
+                                <b title={item.created}
+                                    >{item.created_elapsed}</b
+                                >
+                            </div>
+                        </div>
+                    {:else}
+                        <p class="card-text placeholder-wave">
                             <span
-                                ><Gicon icon="chevron_left" /><b
-                                    >{user_stats.follows.length}</b
-                                > Siguiendo</span
-                            >
-                        </div>
-                        <div class="d-flex flex-row justify-content-center">
-                            <Gicon icon="calendar_month" />&nbsp;Se unió&nbsp;
-                            <b title={item.created}>{item.created_elapsed}</b>
-                        </div>
-                    </div>
-                {:else}
-                    <p class="card-text placeholder-wave">
-                        <span
-                            class="placeholder placeholder-wave col-6 rounded"
-                        />
-                        <br />
-                        <span
-                            class="placeholder placeholder-wave col-6 rounded"
-                        />
-                        <br />
-                    </p>
-                {/if}
+                                class="placeholder placeholder-wave col-6 rounded"
+                            />
+                            <br />
+                            <span
+                                class="placeholder placeholder-wave col-6 rounded"
+                            />
+                            <br />
+                        </p>
+                    {/if}
+                </div>
             </div>
-        </div>
 
-        <div class="card mt-2">
-            <div class="card-header">No sé que poner acá</div>
-            <div class="card-body">En serio...</div>
-        </div>
+            <div class="card mt-2">
+                <div class="card-header">No sé que poner acá</div>
+                <div class="card-body">En serio...</div>
+            </div>
 
-        <div class="card mt-2">
-            <div class="card-header">EEMBRSS</div>
-            <div class="card-body">
-                WEA CTM JUSTO ESTA SE ME OLVIDO Q SE PONER ACA
+            <div class="card mt-2">
+                <div class="card-header">EEMBRSS</div>
+                <div class="card-body">
+                    WEA CTM JUSTO ESTA SE ME OLVIDO Q SE PONER ACA
+                </div>
             </div>
         </div>
     </div>

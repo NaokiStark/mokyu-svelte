@@ -6,7 +6,7 @@
     import CommentsList from "../components/commentsList.svelte";
     import { Body } from "svelte-body"; // weird
     import { link } from "svelte-navigator";
-
+    export let site_config;
     export let shout_id = 0;
 
     let item = null;
@@ -31,8 +31,8 @@
     <div class="col-lg-1" />
     <div class="col-lg-6 mt-2 mx-0 px-0">
         {#if item}
-            <FeedItem {item} />
-            <CommentsList feedList={{ data: item.comments }} />
+            <FeedItem {item} bind:site_config />
+            <CommentsList feedList={{ data: item.comments }} bind:site_config />
         {:else}
             <FeedItemPlaceholder />
         {/if}
@@ -40,7 +40,7 @@
     <div class="col-lg-4">
         {#if item}
             <div
-                class="card mt-3 text-white"
+                class="card mt-3 text-white sticky-top"
                 in:fly={{ opacity: 0, x: 50, duration: 300 }}
             >
                 <div
@@ -71,7 +71,10 @@
                                     <b>{item.user}</b>
                                 </a></span
                             >
-                            <small class="name">{item.rank} karma</small>
+                            <small>
+                                <b>{item.rank_info.fullname}</b>
+                                <span class="name">({item.rank} karma) </span>
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -105,7 +108,7 @@
         background: rgb(2, 0, 36);
         background: linear-gradient(
             0deg,
-            rgb(2 0 36) 0%,
+            #212529 40%,
             rgba(255, 255, 255, 0) 100%
         );
         margin-bottom: -1px;

@@ -2,10 +2,8 @@
     import Gicon from "./gicon.svelte";
     import ReactionsBox from "./reactionsBox.svelte";
     import { link } from "svelte-navigator";
-    import { twiemoji as twemoji } from "../utils/twemoji.js";
-    import YoutubeComponent from "./youtubeComponent.svelte";
-
     export let item = { text: "hello test" };
+    import { twiemoji as twemoji } from "../utils/twemoji.js";
     export let site_config;
 
     let reactionsBoxOpen = false;
@@ -21,7 +19,7 @@
     }
 </script>
 
-<div class="card my-2">
+<div class="card my-2" id="comment-{item.id}">
     <div class="card-header d-flex">
         <img
             src={item.avatar
@@ -33,29 +31,14 @@
                 this.src = "http://localhost/onics/style/default.png";
             }}
         />
-        {#if item.reshoutby}
-            <img
-                src={item.reshoutavatar}
-                alt="Avatar de {item.reshoutby}"
-                class="avatar rounded-circle mr-2 parent-shout-user-avatar"
-                on:error={function () {
-                    this.src = "http://localhost/onics/style/default.png";
-                }}
-            />
-        {/if}
         <div class="d-flex flex-column">
             <span class="user-info">
                 <a use:link href="/{item.user}">{item.user}</a>
-                {#if item.reshoutby}
-                    <small>
-                        compartió de <a use:link href="/{item.reshoutby}"
-                            >{item.reshoutby}</a
-                        ></small
-                    >
-                {/if}</span
-            >
+            </span>
             <small class="date">
-                <a use:link href="/shout/{item.id}">{item.elapsed}</a>
+                <a use:link href="/shout/{item.postid}#comment-{item.id}"
+                    >{item.elapsed}</a
+                >
             </small>
         </div>
     </div>
@@ -65,7 +48,7 @@
             {#if item.attachment_type == 1}
                 <!-- imagen -->
                 <p>
-                    <a use:link href="/shout/{item.id}">
+                    <a use:link href="/shout/{item.postid}#comment-{item.id}">
                         <img
                             src={item.attachment}
                             alt=" Imagen de publicada por {item.user}"
@@ -78,14 +61,22 @@
             {#if item.attachment_type == 4}
                 <!-- streaming service -->
                 {#if streaming_attachment_obj.provider == "www.youtube.com"}
-                    <YoutubeComponent video_info={streaming_attachment_obj} />
+                    <iframe
+                        title="-"
+                        src="//www.youtube.com/embed/{streaming_attachment_obj.id}"
+                        class="video {streaming_attachment_obj.id}"
+                        width="520"
+                        height="390"
+                        frameborder="0"
+                        allowfullscreen=""
+                    />
                 {/if}
             {/if}
         {/if}
     </div>
     <div class="card-footer d-flex justify-content-between ">
         {#if item.comments_count}
-            <a use:link href="/shout/{item.id}">
+            <a use:link href="/shout/{item.postid}#comment-{item.id}">
                 <Gicon
                     title="Comentarios"
                     icon="forum"
@@ -103,8 +94,10 @@
             on:click={() => (reactionsBoxOpen = !reactionsBoxOpen)}
         />
     </div>
-    {#if reactionsBoxOpen && site_config}
-        <ReactionsBox bind:reaction_list={site_config.reactions} />
+    {#if reactionsBoxOpen}
+        {#if site_config}
+            <ReactionsBox bind:reaction_list={site_config.reactions} />
+        {/if}
     {/if}
 </div>
 
@@ -122,6 +115,10 @@
         max-width: 100%;
         max-height: 75vh; /* I thing 75vh is ok?, works ok in desktop and mobile*/
         border-radius: 3px;
+    }
+    iframe.video {
+        width: 100%;
+        min-height: 50vh;
     }
 
     .parent-shout-user-avatar {
