@@ -3,8 +3,11 @@
     import { api_request } from "../api.js";
     import Gicon from "../components/gicon.svelte";
     import FeedList from "../components/feedList.svelte";
+    import { twiemoji as twemoji } from "../utils/twemoji.js";
+    import InfiniteLoading from "svelte-infinite-loading";
 
     import { Body } from "svelte-body"; // weird
+    import { each } from "svelte/internal";
     export let site_config;
 
     export let username;
@@ -33,9 +36,11 @@
 
     let feedList = {
         info: { page: 0 },
-        data: null,
+        data: [],
     };
 
+    let page = 0;
+    /*
     $: get_user_feed(item).then((x) => {
         feedList.data = x.data;
     });
@@ -45,6 +50,21 @@
             return Promise.reject();
         }
         return api_request(`feed_profile/${sid.id}`);
+    }*/
+
+    function infiniteHandler({ detail: { loaded, complete } }) {
+        api_request(`feed_profile/${item.id}?limit=10&page=${page}`).then(
+            (x) => {
+                if (x.data.length > 0) {
+                    feedList.data = [...feedList.data, ...x.data];
+                    page += 1;
+                    feedList.info.page = page;
+                    loaded();
+                } else {
+                    complete();
+                }
+            }
+        );
     }
 </script>
 
@@ -131,7 +151,9 @@
                     </div>
                 </div>
             </div>
+            <!-- feedList -->
             <FeedList {feedList} bind:site_config />
+            <InfiniteLoading spinner="wavedots" on:infinite={infiniteHandler} />
         {/if}
     </div>
     <div class="col-lg-3">
@@ -182,14 +204,78 @@
             </div>
 
             <div class="card mt-2">
-                <div class="card-header">No sé que poner acá</div>
-                <div class="card-body">En serio...</div>
+                <div class="card-header">
+                    <Gicon icon="military_tech" /> Medallas
+                </div>
+                <div class="card-body d-flex flex-row flex-wrap">
+                    <div
+                        class="medal d-flex flex-column flex-wrap text-center"
+                        title="Es parte del Dev team!"
+                    >
+                        <span class="medal-icon  text-center">
+                            <Gicon icon="code" />
+                        </span>
+                        <span>Dev</span>
+                    </div>
+                    <div
+                        class="medal d-flex flex-column flex-wrap text-center"
+                        title="Es parte del programa de limpieza de errores"
+                    >
+                        <span class="medal-icon text-center">
+                            <Gicon icon="bug_report" />
+                        </span>
+                        <span>Debugger</span>
+                    </div>
+                    <div
+                        class="medal d-flex flex-column flex-wrap text-center"
+                        title="Es la gorra"
+                    >
+                        <span class="medal-icon text-center">
+                            <Gicon icon="local_police" />
+                        </span>
+                        <span>Mod</span>
+                    </div>
+                </div>
             </div>
 
             <div class="card mt-2">
-                <div class="card-header">EEMBRSS</div>
+                <div class="card-header">
+                    <Gicon icon="feed" /> Últimos Temas
+                </div>
                 <div class="card-body">
-                    WEA CTM JUSTO ESTA SE ME OLVIDO Q SE PONER ACA
+                    <ul class="last-posts">
+                        {#if user_stats}
+                            {#each user_stats.lastposts as post}
+                                <li class="d-flex" use:twemoji>
+                                    <span title={post.category_name}>
+                                        {post.category_icon}
+                                    </span>
+                                    <span
+                                        class="post-title ml-1"
+                                        title={post.title}
+                                    >
+                                        {post.title}
+                                    </span>
+                                </li>
+                            {/each}
+                        {:else}
+                            <p class="card-text placeholder-wave">
+                                <li
+                                    class="placeholder placeholder-wave col-6 rounded"
+                                />
+                                <br />
+                                <li
+                                    class="placeholder placeholder-wave col-6 rounded"
+                                />
+                                <br />
+                            </p>
+                        {/if}
+                    </ul>
+                    <div class="d-flex d-row justify-content-end">
+                        <button type="button" class="btn btn-primary btn-sm">
+                            Ver más
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,6 +307,11 @@
         padding: 0;
         margin: 0;
     }
+    .last-posts {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
     .card-user-info {
         width: 100%;
         margin: 0;
@@ -237,5 +328,27 @@
 
     .cursor-default {
         cursor: default;
+    }
+    .medal {
+        cursor: default;
+        padding: 0.3em;
+    }
+    .medal-icon {
+        background-color: #e9ecef;
+        color: #212529;
+        padding: 1em;
+        border-radius: 50px;
+        width: 56px;
+        height: 56px;
+        margin: 0 auto;
+    }
+
+    .post-title {
+        text-overflow: ellipsis;
+        max-width: 100%;
+        word-break: break-all;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
     }
 </style>

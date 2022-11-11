@@ -61,7 +61,7 @@ export default {
 		}),
 		commonjs(),
 		replace({
-			'bkndloc': production ? '//embers.fabi.pw/api/' : '//localhost/onics/api/'
+			'bkndloc': production ? '//potato.fabi.pw/api/' : '//localhost/onics/api/'
 		}),
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated

@@ -7,6 +7,9 @@
 
     export let item = { text: "hello test" };
     export let site_config;
+    export let options = {
+        show_3x3: false,
+    };
 
     let reactionsBoxOpen = false;
 
@@ -19,9 +22,13 @@
             }
         }
     }
+
+    let reaction_test = [{ "❤️": 10 }];
+
+    let reactions_box_enabled = false;
 </script>
 
-<div class="card my-2">
+<div class="card my-2 {options.show_3x3 ? 'col-md-3' : ''}">
     <div class="card-header d-flex">
         <img
             src={item.avatar
@@ -96,19 +103,42 @@
         {:else}
             <span />
         {/if}
-        <Gicon
-            title="Reacciones"
-            icon="add_reaction"
-            class="cursor-pointer text-muted"
-            on:click={() => (reactionsBoxOpen = !reactionsBoxOpen)}
-        />
+        <div class="d-flex justify-content-between ">
+            <div class="users-reactions d-flex flex-row">
+                {#each reaction_test as reactn}
+                    {#if reactn[Object.keys(reactn)[0]] > 0}
+                        <span use:twemoji>
+                            <span class="reaction-count-emoji">
+                                {Object.keys(reactn)[0]}
+                            </span>
+                            <span class="badge badge-primary reaction-count">
+                                {reactn[Object.keys(reactn)[0]]}
+                            </span>
+                        </span>
+                    {/if}
+                {/each}
+            </div>
+            {#if reactions_box_enabled}
+                <Gicon
+                    title="Reacciones"
+                    icon="add_reaction"
+                    class="cursor-pointer text-muted"
+                    on:click={() => (reactionsBoxOpen = !reactionsBoxOpen)}
+                />
+            {/if}
+        </div>
     </div>
+
     {#if reactionsBoxOpen && site_config}
         <ReactionsBox bind:reaction_list={site_config.reactions} />
     {/if}
 </div>
 
 <style>
+    .card-footer {
+        user-select: none;
+    }
+
     .avatar {
         width: 50px;
         height: 50px;
@@ -130,6 +160,19 @@
         height: 35px;
         top: 30px;
         left: 40px;
+    }
+    .reaction-count-emoji {
+        font-size: 1.2em;
+        cursor: pointer;
+    }
+    .reaction-count {
+        position: relative;
+        top: 11px;
+        left: -9px;
+        font-size: 0.7em;
+        background-color: #504f4f !important;
+        border-radius: 50px;
+        cursor: pointer;
     }
 
     @media (max-width: 1000px) {

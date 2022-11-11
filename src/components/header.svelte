@@ -34,6 +34,18 @@
                         <Gicon icon="explore" /> Explorar
                     </a>
                 </li>
+                <!--
+                <li class="nav-item">
+                    <a use:link class="nav-link" href="/posts">
+                        <Gicon icon="feed" /> Posts
+                    </a>
+                </li>
+                -->
+                <li class="nav-item">
+                    <a use:link class="nav-link" href="/comunidades">
+                        <Gicon icon="workspaces_filled" /> Comunidades
+                    </a>
+                </li>
             </ul>
         </div>
         <form class="d-flex">

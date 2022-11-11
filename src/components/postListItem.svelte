@@ -1,0 +1,75 @@
+<script>
+    export let post;
+</script>
+
+{#if post}
+    <span
+        style="background: url('{post.post_caption}') no-repeat"
+        class="post-thumbnail"
+    />
+    <div class="d-flex flex-column ml-1 post-details">
+        <span class="post-title">
+            <b> {post.title} </b>
+        </span>
+        <small class="text-muted-alt"
+            >Creado por @<span class="text-muted-alt-alt">{post.user}</span>
+            {post.elapsed} en
+            <span class="badge badge-primary">{post.community_name}</span>
+        </small>
+        <span class="text-muted-alt">
+            <span class="badge badge-primary">
+                {post.category_icon}
+                {post.category_name}
+            </span>
+        </span>
+    </div>
+{:else}
+    <span
+        style="background: url(http://localhost/onics/uploads/1-1559773776_anime_anime_girls_cat_girl_glitch_art_pink_artwork_digital_art-1469665.jpg) no-repeat"
+        class="post-thumbnail"
+    />
+    <div class="d-flex flex-column ml-1 post-details">
+        <span class="post-title">
+            <b> Esto es una prueba, no se si ponerlo tipo lista </b>
+        </span>
+        <small class="text-muted-alt"
+            >Creado por @<span class="text-muted-alt-alt">Nekita</span> hace 3 días</small
+        >
+        <span class="text-muted-alt">
+            <span class="badge badge-primary"> 🖼️ Imágenes </span>
+        </span>
+    </div>
+{/if}
+
+<style>
+    .post-details {
+        max-width: 75%;
+    }
+    .post-thumbnail {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        background-size: cover !important;
+        background-position: center !important;
+        border-radius: 5px;
+        margin-right: 0.2em;
+    }
+    .post-title {
+        text-overflow: ellipsis;
+        max-width: 100%;
+        word-break: break-all;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    @media (max-width: 720px) {
+        .post-thumbnail {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 0.5em;
+        }
+        .post-details {
+            max-width: 100%;
+        }
+    }
+</style>

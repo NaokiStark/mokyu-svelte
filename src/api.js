@@ -57,7 +57,7 @@ export const api_request = async function (location, _method = 'get', _data = {}
                 `${backendLocation}${location}`,
                 {
                     method: _method,
-                    body: `data=${_data}`,
+                    body: `${_data}`,
                     headers: headers,
                 }
             ).then(response => {

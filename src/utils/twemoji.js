@@ -6,8 +6,5 @@ export const twiemoji = function (node, params) {
         update(params) {
             twemoji.parse(node);
         },
-        destroy() {
-
-        },
     };
 }

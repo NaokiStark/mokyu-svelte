@@ -1,10 +1,14 @@
 <script>
     import { twiemoji as twemoji } from "../utils/twemoji.js";
+    import { fly } from "svelte/transition";
     export let options = {};
     export let reaction_list;
 </script>
 
-<div class="reactions-box position-absolute">
+<div
+    class="reactions-box position-absolute"
+    transition:fly={{ opacity: 0, y: 50, duration: 200 }}
+>
     <div class="card">
         <div class="card-body d-flex emoji-list">
             {#if reaction_list}
