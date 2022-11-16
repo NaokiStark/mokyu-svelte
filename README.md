@@ -8,8 +8,10 @@ Este proyecto es para re-hacer mokyu en base a un nuevo front, no es especialmen
 
 ## Ejecución
 
-- `npm run dev` en development
-- `npm start` en producción
+- `npm run dev` en development (compila e inicia el servidor en modo debug)
+- `npm run build` compila en modo producción
+- `npm run prod` compila en modo producción e inicia el servidor
+- `npm run start` si se desea ejecutar el servidor sin compilar (usar `npm run build` antes)
 
 ## Consideraciones
 
