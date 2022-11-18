@@ -13,6 +13,7 @@
 	import Posts from "./routes/posts.svelte";
 	import Communities from "./routes/communities.svelte";
 	import Community from "./routes/community.svelte";
+	import Post from "./routes/post.svelte";
 
 	const site_name = "Emburns";
 
@@ -98,6 +99,10 @@
 			<Community bind:site_config commid={params.id} />
 		</Route>
 
+		<Route path="tema/:id" let:params>
+			<Post post_id={params.id} bind:site_config />
+		</Route>
+
 		<Route path="/:id" let:params>
 			<Profile username={params.id} bind:site_config />
 		</Route>
@@ -163,5 +168,9 @@
 	:global(.form-control:focus) {
 		border-color: #d99357 !important;
 		box-shadow: 0 0 3px 0.2rem #d9935742 !important;
+	}
+
+	:global(a:hover) {
+		text-decoration: none !important;
 	}
 </style>

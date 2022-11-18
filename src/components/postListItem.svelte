@@ -1,28 +1,32 @@
 <script>
+    import { link } from "svelte-navigator";
+
     export let post;
 </script>
 
 {#if post}
-    <span
-        style="background: url('{post.post_caption}') no-repeat"
-        class="post-thumbnail"
-    />
-    <div class="d-flex flex-column ml-1 post-details">
-        <span class="post-title">
-            <b> {post.title} </b>
-        </span>
-        <small class="text-muted-alt"
-            >Creado por @<span class="text-muted-alt-alt">{post.user}</span>
-            {post.elapsed} en
-            <span class="badge badge-primary">{post.community_name}</span>
-        </small>
-        <span class="text-muted-alt">
-            <span class="badge badge-primary">
-                {post.category_icon}
-                {post.category_name}
+    <a use:link href="/tema/{post.post_id}">
+        <span
+            style="background: url('{post.post_caption}') no-repeat"
+            class="post-thumbnail"
+        />
+        <div class="d-flex flex-column ml-1 post-details">
+            <span class="post-title">
+                <b> {post.title} </b>
             </span>
-        </span>
-    </div>
+            <small class="text-muted-alt"
+                >Creado por @<span class="text-muted-alt-alt">{post.user}</span>
+                {post.elapsed} en
+                <span class="badge badge-primary">{post.community_name}</span>
+            </small>
+            <span class="text-muted-alt">
+                <span class="badge badge-primary">
+                    {post.category_icon}
+                    {post.category_name}
+                </span>
+            </span>
+        </div>
+    </a>
 {:else}
     <span
         style="background: url(http://localhost/onics/uploads/1-1559773776_anime_anime_girls_cat_girl_glitch_art_pink_artwork_digital_art-1469665.jpg) no-repeat"
@@ -62,6 +66,14 @@
         overflow: hidden;
         white-space: nowrap;
     }
+    a,
+    a > * {
+        color: white;
+    }
+    a {
+        display: flex;
+    }
+
     @media (max-width: 720px) {
         .post-thumbnail {
             width: 100%;

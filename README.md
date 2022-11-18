@@ -16,3 +16,5 @@ Este proyecto es para re-hacer mokyu en base a un nuevo front, no es especialmen
 ## Consideraciones
 
 Esto funciona con la futura API (que está a medias) de mokyu, a implementar JWT y demas cosas
+
+Este proyecto no incluye backend

@@ -41,7 +41,8 @@
                 <b><Gicon icon="info" /> Info</b>
             </div>
             <div class="card-body">
-                Bienvenido/a a la sección de comunidades!
+                <Gicon icon="info" /> Ya se pueden ver los temas y recorrer comunidades!
+                <Gicon icon="info" />
             </div>
         </div>
     </div>
