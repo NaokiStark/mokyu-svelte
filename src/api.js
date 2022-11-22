@@ -92,9 +92,9 @@ export const checkLogin = async function () {
     }
 
     if (!localStorage.userData) {
-        let chkLogin = await api_request('user/get_login');
-        if (chkLogin.result) {
-            localStorage.userData = JSON.stringify(chkLogin.result.data);
+        let chkLogin = await api_request('checkLogin');
+        if (chkLogin.status == 1) {
+            localStorage.userData = JSON.stringify(chkLogin.data);
             return true;
         }
         return false;
@@ -111,7 +111,7 @@ export const checkLogin = async function () {
 
         if (localLogin.checkTimeout >= Date.now()) {
             // Check login again
-            let chkLogin = await api_request('user/get_login');
+            let chkLogin = await api_request('checkLogin');
             if (chkLogin.result) {
                 localStorage.userData = JSON.stringify(chkLogin.result.data);
                 return true;

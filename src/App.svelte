@@ -6,7 +6,7 @@
 	import MiSingle from "./routes/mi_single.svelte";
 	import Register from "./routes/register.svelte";
 	import Profile from "./routes/profile.svelte";
-	import { api_request } from "./api.js";
+	import { api_request, checkLogin } from "./api.js";
 
 	import { Body } from "svelte-body"; // weird
 	import { onMount } from "svelte";
@@ -18,9 +18,14 @@
 	const site_name = "Emburns";
 
 	let site_config = {};
+	let user_data = {};
 	onMount(async () => {
 		site_config = await api_request("site_config");
 		site_config = site_config.data;
+		let response_user_data = await checkLogin();
+		if (response_user_data) {
+			user_data = JSON.parse(localStorage.userData);
+		}
 	});
 
 	let site = "register";
@@ -52,7 +57,7 @@
 </svelte:head>
 
 <Router>
-	<Header />
+	<Header bind:user_data />
 	<main class="container-fluid mx-0 px-0">
 		<Route path="/">
 			<!-- more weirdest-->

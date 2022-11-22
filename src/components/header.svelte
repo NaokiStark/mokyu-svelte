@@ -1,6 +1,7 @@
 <script>
     import Gicon from "./gicon.svelte";
     import { link } from "svelte-navigator";
+    export let user_data;
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -60,16 +61,33 @@
             </button>
         </form>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-md-1 ugly-fix">
-            <li class="nav-item">
-                <a use:link class="btn btn-primary" href="/register">
-                    <Gicon icon="person_add_alt_1" /> Registro
-                </a>
-            </li>
-            <li class="nav-item">
-                <a use:link class="nav-link text-white" href="/login">
-                    Ingresar
-                </a>
-            </li>
+            {#if Object.keys(user_data).length === 0}
+                <li class="nav-item">
+                    <a use:link class="btn btn-primary" href="/register">
+                        <Gicon icon="person_add_alt_1" /> Registro
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a use:link class="nav-link text-white" href="/login">
+                        Ingresar
+                    </a>
+                </li>
+            {:else if user_data.user}
+                <li class="nav-item user-menu rounded">
+                    <a
+                        use:link
+                        class="nav-link text-white user-menu-toggler"
+                        href="/{user_data.user}"
+                    >
+                        <img
+                            src={user_data.avatar}
+                            alt="{user_data.user}'s avatar"
+                            class="avatar-mini rounded-circle mr-2 svelte-wvgsce"
+                        />
+                        {user_data.user}
+                    </a>
+                </li>
+            {/if}
         </ul>
     </div>
 </nav>
@@ -77,5 +95,19 @@
 <style>
     .ugly-fix {
         padding-top: 2px;
+    }
+    .avatar-mini {
+        width: 32px;
+        height: 32px;
+    }
+    .user-menu {
+        border: 1px solid #6c757d;
+    }
+    .user-menu-toggler {
+        padding: 0 0.1em;
+        height: calc(1.5em + 0.75rem + 2px);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 </style>

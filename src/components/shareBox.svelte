@@ -1,8 +1,13 @@
 <script>
     import Gicon from "./gicon.svelte";
     import { api_request } from "../api.js";
+    import ErrorModal from "./modals/errorModal.svelte";
 
     export let site_config;
+    export let feedList = [];
+
+    let modalError = false;
+    let errorMessage = "There is not errors today";
 
     let shout_info = {
         text: "",
@@ -21,7 +26,20 @@
                 .map((key) => key + "=" + encodeURIComponent(shout_info[key]))
                 .join("&")
         );
-        console.log(result);
+
+        if (result.status == 0) {
+            errorMessage = result.text ?? result.data;
+            modalError = true;
+        } else {
+            feedList.data = [result.data, ...feedList.data];
+            shout_info = {
+                text: "",
+                attachment_type: 0,
+                attachment: "",
+                signature: "",
+                user_key: site_config ? site_config.tknhash : "",
+            };
+        }
     }
 </script>
 
@@ -76,6 +94,9 @@
         </button>
     </div>
 </div>
+<ErrorModal bind:visible={modalError}>
+    {errorMessage}
+</ErrorModal>
 
 <style>
     .avatar {

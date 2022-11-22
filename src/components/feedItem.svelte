@@ -4,6 +4,7 @@
     import { link } from "svelte-navigator";
     import { twiemoji as twemoji } from "../utils/twemoji.js";
     import YoutubeComponent from "./youtubeComponent.svelte";
+    import { fly, fade } from "svelte/transition";
 
     export let item = { text: "hello test" };
     export let site_config;
@@ -26,6 +27,8 @@
     let reaction_test = [{ "❤️": 10 }];
 
     let reactions_box_enabled = false;
+
+    let delay = 0;
 </script>
 
 <div class="card my-2 {options.show_3x3 ? 'col-md-3' : ''}">

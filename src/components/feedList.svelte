@@ -2,6 +2,8 @@
     import FeedItem from "./feedItem.svelte";
     import FeedItemPlaceholder from "./feedItemPlaceholder.svelte";
     import ShareBox from "./shareBox.svelte";
+    import { fly, fade } from "svelte/transition";
+    import { flip } from "svelte/animate";
 
     export let site_config;
     export let feedList = { info: { page: 0 }, data: [] };
@@ -16,11 +18,16 @@
 
 <div class="feed-container">
     {#if options.sharebox}
-        <ShareBox bind:site_config />
+        <ShareBox bind:site_config bind:feedList />
     {/if}
     {#if feedList.data}
-        {#each feedList.data.slice(0, options.items_per_page) as item}
-            <FeedItem {item} bind:site_config {options} />
+        {#each feedList.data.slice(0, options.items_per_page) as item (item)}
+            <div
+                in:fly={{ opacity: 0, y: -50, duration: 300 }}
+                animate:flip={{ delay: 0, duration: 300 }}
+            >
+                <FeedItem {item} bind:site_config {options} />
+            </div>
         {/each}
     {:else}
         {#each dumb as dummy}
