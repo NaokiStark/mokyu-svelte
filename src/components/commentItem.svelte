@@ -4,6 +4,7 @@
     import { link } from "svelte-navigator";
     export let item = { text: "hello test" };
     import { twiemoji as twemoji } from "../utils/twemoji.js";
+    import { backendRoot } from "../api.js";
     export let site_config;
 
     let reactionsBoxOpen = false;
@@ -22,13 +23,11 @@
 <div class="card my-2" id="comment-{item.id}">
     <div class="card-header d-flex">
         <img
-            src={item.avatar
-                ? item.avatar
-                : "http://localhost/onics/style/default.png"}
+            src={item.avatar ? item.avatar : `${backendRoot}style/default.png`}
             alt="Avatar de {item.user}"
             class="avatar rounded-circle mr-2"
             on:error={function () {
-                this.src = "http://localhost/onics/style/default.png";
+                this.src = `${backendRoot}style/default.png`;
             }}
         />
         <div class="d-flex flex-column">

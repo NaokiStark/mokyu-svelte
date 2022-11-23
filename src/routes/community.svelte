@@ -27,6 +27,12 @@
         return api_request(`community/${sid}`);
     }
 
+    let infiniteId = Symbol();
+    function refreshInfinite() {
+        page = 0;
+        post_list = [];
+        infiniteId = Symbol();
+    }
     function infiniteHandler({ detail: { loaded, complete } }) {
         api_request(`communityFeed/${commid}?limit=10&page=${page}`).then(
             (x) => {
@@ -129,6 +135,7 @@
                 <InfiniteLoading
                     spinner="wavedots"
                     on:infinite={infiniteHandler}
+                    identifier={infiniteId}
                 />
             </div>
         {/if}

@@ -1,7 +1,25 @@
 <script>
     import Gicon from "./gicon.svelte";
-    import { link } from "svelte-navigator";
+    import { link, useLocation } from "svelte-navigator";
+    import { backendRoot } from "../api.js";
+
     export let user_data;
+
+    const location = useLocation();
+    let actual_location = $location;
+
+    $: {
+        actual_location = $location;
+        console.log(actual_location);
+    }
+
+    function location_contains(word) {
+        return actual_location.pathname.indexOf(word) > -1;
+    }
+
+    function is_home() {
+        return actual_location.pathname.endsWith("/");
+    }
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -23,7 +41,7 @@
                 <li class="nav-item">
                     <a
                         use:link
-                        class="nav-link active"
+                        class="nav-link {is_home() ? 'active' : ''}"
                         aria-current="page"
                         href="/"
                     >
@@ -31,7 +49,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a
+                        use:link
+                        class="nav-link {location_contains('explorar')
+                            ? 'active'
+                            : ''}"
+                        href="/explorar"
+                    >
                         <Gicon icon="explore" /> Explorar
                     </a>
                 </li>
@@ -43,7 +67,14 @@
                 </li>
                 -->
                 <li class="nav-item">
-                    <a use:link class="nav-link" href="/comunidades">
+                    <a
+                        use:link
+                        class="nav-link {location_contains('comunidad') ||
+                        location_contains('tema')
+                            ? 'active'
+                            : ''}"
+                        href="/comunidades"
+                    >
                         <Gicon icon="workspaces_filled" /> Comunidades
                     </a>
                 </li>
@@ -83,6 +114,8 @@
                             src={user_data.avatar}
                             alt="{user_data.user}'s avatar"
                             class="avatar-mini rounded-circle mr-2 svelte-wvgsce"
+                            on:error={() =>
+                                (this.src = `${backendRoot}style/default.png`)}
                         />
                         {user_data.user}
                     </a>

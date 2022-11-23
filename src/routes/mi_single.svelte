@@ -2,10 +2,12 @@
     import FeedItem from "../components/feedItem.svelte";
     import FeedItemPlaceholder from "../components/feedItemPlaceholder.svelte";
     import { fly, fade } from "svelte/transition";
-    import { api_request } from "../api.js";
+    import { api_request, backendRoot } from "../api.js";
+
     import CommentsList from "../components/commentsList.svelte";
     import { Body } from "svelte-body"; // weird
     import { link } from "svelte-navigator";
+    import Gicon from "../components/gicon.svelte";
     export let site_config;
     export let shout_id = 0;
 
@@ -18,6 +20,15 @@
     function get_shout(sid) {
         return api_request(`feed/${sid}?comments`);
     }
+
+    let hashtags = [
+        "Emburns",
+        "#Pruebas",
+        "#Emburns",
+        "#ElonCompraEmburns",
+        "#Toringa",
+        "#ElFacha",
+    ];
 </script>
 
 {#if item}
@@ -38,53 +49,96 @@
         {/if}
     </div>
     <div class="col-lg-4">
-        {#if item}
-            <div
-                class="card mt-3 text-white sticky-top"
-                in:fly={{ opacity: 0, x: 50, duration: 300 }}
-            >
+        <div class="sticky-top">
+            {#if item}
                 <div
-                    class="card-header d-flex flex-column flex-wrap-reverse align-items-end justify-content-end card-header-with-cover"
-                    style="background-image: url('{item.cover}')"
+                    class="card mt-3 text-white"
+                    in:fly={{ opacity: 0, x: 50, duration: 300 }}
                 >
-                    <div class="d-flex flex-row card-user-info">
-                        <a class="text-white" use:link href="/{item.user}">
-                            <img
-                                src={item.avatar
-                                    ? item.avatar
-                                    : "http://localhost/onics/style/default.png"}
-                                alt="Avatar de {item.user}"
-                                class="avatar rounded-circle mr-2"
-                                on:error={function () {
-                                    this.src =
-                                        "http://localhost/onics/style/default.png";
-                                }}
-                            />
-                        </a>
-                        <div class="d-flex flex-column">
-                            <span class="user-info">
-                                <a
-                                    class="text-white"
-                                    use:link
-                                    href="/{item.user}"
+                    <div
+                        class="card-header d-flex flex-column flex-wrap-reverse align-items-end justify-content-end card-header-with-cover"
+                        style="background-image: url('{item.cover}')"
+                    >
+                        <div class="d-flex flex-row card-user-info">
+                            <a class="text-white" use:link href="/{item.user}">
+                                <img
+                                    src={item.avatar
+                                        ? item.avatar
+                                        : `${backendRoot}style/default.png`}
+                                    alt="Avatar de {item.user}"
+                                    class="avatar rounded-circle mr-2"
+                                    on:error={function () {
+                                        this.src = `${backendRoot}style/default.png`;
+                                    }}
+                                />
+                            </a>
+                            <div class="d-flex flex-column">
+                                <span class="user-info">
+                                    <a
+                                        class="text-white"
+                                        use:link
+                                        href="/{item.user}"
+                                    >
+                                        <b>{item.user}</b>
+                                    </a></span
                                 >
-                                    <b>{item.user}</b>
-                                </a></span
-                            >
-                            <small>
-                                <b>{item.rank_info.fullname}</b>
-                                <span class="name">({item.rank} karma) </span>
-                            </small>
+                                <small>
+                                    <b>{item.rank_info.fullname}</b>
+                                    <span class="name"
+                                        >({item.rank} karma)
+                                    </span>
+                                </small>
+                            </div>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            {item.quote}
+                        </p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <p class="card-text">
-                        {item.quote}
-                    </p>
+
+                <div
+                    class="card mt-2"
+                    in:fly={{ opacity: 0, x: 50, duration: 300, delay: 100 }}
+                >
+                    <div class="card-header">
+                        <Gicon icon="tag" /> Tendencias
+                    </div>
+
+                    <div class="card-body">
+                        <ul class="hashtags-container">
+                            {#each hashtags as hashtag}
+                                <li>
+                                    <a
+                                        class="text-link"
+                                        href="/buscar/{hashtag}"
+                                    >
+                                        {hashtag}
+                                    </a>
+                                </li>
+                            {/each}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        {/if}
+
+                <div
+                    class="card mt-2"
+                    in:fly={{ opacity: 0, x: 50, duration: 300, delay: 200 }}
+                >
+                    <div class="card-header">
+                        <Gicon icon="tips_and_updates" /> Te puede interesar
+                    </div>
+                    <div class="card-body">
+                        <img
+                            src="https://media.tenor.com/Ecad-WCJg7oAAAAC/vamos-manaos-manaos.gif"
+                            alt="manaos"
+                            class="img-fluid"
+                        />
+                    </div>
+                </div>
+            {/if}
+        </div>
     </div>
 </div>
 
@@ -112,5 +166,9 @@
             rgba(255, 255, 255, 0) 100%
         );
         margin-bottom: -1px;
+    }
+
+    .hashtags-container {
+        list-style: none;
     }
 </style>

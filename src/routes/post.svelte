@@ -2,7 +2,7 @@
     import { Body } from "svelte-body";
     import { link } from "svelte-navigator";
     import { fly, fade } from "svelte/transition";
-    import { api_request } from "../api.js";
+    import { api_request, backendRoot } from "../api.js";
     import Gicon from "../components/gicon.svelte";
 
     export let site_config;
@@ -47,12 +47,11 @@
                                 <img
                                     src={item.community_avatar
                                         ? item.community_avatar
-                                        : "http://localhost/onics/style/default.png"}
+                                        : `${backendRoot}style/default.png`}
                                     alt="Avatar de {item.community_name}"
                                     class="avatar rounded-circle mr-2"
                                     on:error={function () {
-                                        this.src =
-                                            "http://localhost/onics/style/default.png";
+                                        this.src = `${backendRoot}style/default.png`;
                                     }}
                                 />
                             </a>
@@ -128,12 +127,11 @@
                             <img
                                 src={item.avatar
                                     ? item.avatar
-                                    : "http://localhost/onics/style/default.png"}
+                                    : `${backendRoot}style/default.png`}
                                 alt="Avatar de {item.user}"
                                 class="avatar rounded-circle mr-2"
                                 on:error={function () {
-                                    this.src =
-                                        "http://localhost/onics/style/default.png";
+                                    this.src = `${backendRoot}style/default.png`;
                                 }}
                             />
                         </a>

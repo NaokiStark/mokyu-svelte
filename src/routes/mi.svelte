@@ -4,6 +4,7 @@
     import { api_request } from "../api.js";
     import { onMount } from "svelte";
     import InfiniteLoading from "svelte-infinite-loading";
+    import Gicon from "../components/gicon.svelte";
 
     export let site_config;
 
@@ -11,6 +12,15 @@
         info: { page: 0 },
         data: [],
     };
+
+    let hashtags = [
+        "Emburns",
+        "#Pruebas",
+        "#Emburns",
+        "#ElonCompraEmburns",
+        "#Toringa",
+        "#ElFacha",
+    ];
 
     let page = 0;
     /*
@@ -22,6 +32,7 @@
         return api_request(`publico?limit=20&page=${cpage}`);
     }
 */
+
     function infiniteHandler({ detail: { loaded, complete } }) {
         api_request(`publico?limit=10&page=${page}`).then((x) => {
             if (x.data.length > 0) {
@@ -67,19 +78,33 @@
         <InfiniteLoading spinner="wavedots" on:infinite={infiniteHandler} />
     </div>
     <div class="col-md-3">
-        <div class="card mt-2 sticky-top">
+        <div class="card mt-2">
             <div class="card-header">
-                <h5>Esto no es Embers</h5>
+                <Gicon icon="tag" /> Tendencias
+            </div>
+
+            <div class="card-body">
+                <ul class="hashtags-container">
+                    {#each hashtags as hashtag}
+                        <li>
+                            <a class="text-link" href="/buscar/{hashtag}">
+                                {hashtag}
+                            </a>
+                        </li>
+                    {/each}
+                </ul>
+            </div>
+        </div>
+        <div class="card mt-2">
+            <div class="card-header">
+                <Gicon icon="tips_and_updates" /> Te puede interesar
             </div>
             <div class="card-body">
-                <ul>
-                    <li>Ya lo dije</li>
-                    <li>Embers no va a volver</li>
-                    <li>Mokyu va a volver</li>
-                    <li>Mokyu va a cambiar de nombre?</li>
-                    <li>Es todo un misterio</li>
-                    <li>Tomatela te dije</li>
-                </ul>
+                <img
+                    src="https://media.tenor.com/Ecad-WCJg7oAAAAC/vamos-manaos-manaos.gif"
+                    alt="manaos"
+                    class="img-fluid"
+                />
             </div>
         </div>
     </div>
@@ -89,5 +114,8 @@
     .avatar {
         width: 50px;
         height: 50px;
+    }
+    .hashtags-container {
+        list-style: none;
     }
 </style>

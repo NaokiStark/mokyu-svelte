@@ -1,4 +1,5 @@
 const backendLocation = 'bkndloc';
+export const backendRoot = 'bkndroot_';
 export const api_request = async function (location, _method = 'get', _data = {}) {
     let headers = {};
     if (!!localStorage.token) {

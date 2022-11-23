@@ -20,6 +20,13 @@
         return api_request(`communitiesFeed`);
     }*/
 
+    let infiniteId = Symbol();
+    function refreshInfinite() {
+        page = 0;
+        post_list = [];
+        infiniteId = Symbol();
+    }
+
     function infiniteHandler({ detail: { loaded, complete } }) {
         api_request(`communitiesFeed?limit=10&page=${page}`).then((x) => {
             if (x.data.length > 0) {
@@ -66,7 +73,11 @@
                 </ul>
             </div>
         </div>
-        <InfiniteLoading spinner="wavedots" on:infinite={infiniteHandler} />
+        <InfiniteLoading
+            spinner="wavedots"
+            on:infinite={infiniteHandler}
+            identifier={infiniteId}
+        />
     </div>
     <div class="col-md-4">
         <div class="card mt-2">

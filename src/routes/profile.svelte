@@ -1,6 +1,6 @@
 <script>
     import { fly, fade } from "svelte/transition";
-    import { api_request } from "../api.js";
+    import { api_request, backendRoot } from "../api.js";
     import Gicon from "../components/gicon.svelte";
     import FeedList from "../components/feedList.svelte";
     import { twiemoji as twemoji } from "../utils/twemoji.js";
@@ -21,6 +21,7 @@
 
     $: get_stats(item).then((x) => {
         user_stats = x.data;
+        refreshInfinite();
     });
 
     function get_user(sid) {
@@ -51,6 +52,12 @@
         }
         return api_request(`feed_profile/${sid.id}`);
     }*/
+    let infiniteId = Symbol();
+    function refreshInfinite() {
+        page = 0;
+        feedList.data = [];
+        infiniteId = Symbol();
+    }
 
     function infiniteHandler({ detail: { loaded, complete } }) {
         api_request(`feed_profile/${item.id}?limit=10&page=${page}`).then(
@@ -88,12 +95,11 @@
                         <img
                             src={item.avatar
                                 ? item.avatar
-                                : "http://localhost/onics/style/default.png"}
+                                : `${backendRoot}style/default.png`}
                             alt="Avatar de {item.user}"
                             class="avatar main-avatar rounded-circle mr-2"
                             on:error={function () {
-                                this.src =
-                                    "http://localhost/onics/style/default.png";
+                                this.src = `${backendRoot}style/default.png`;
                             }}
                         />
                         <div
@@ -153,7 +159,11 @@
             </div>
             <!-- feedList -->
             <FeedList {feedList} bind:site_config />
-            <InfiniteLoading spinner="wavedots" on:infinite={infiniteHandler} />
+            <InfiniteLoading
+                spinner="wavedots"
+                on:infinite={infiniteHandler}
+                identifier={infiniteId}
+            />
         {/if}
     </div>
     <div class="col-lg-3">

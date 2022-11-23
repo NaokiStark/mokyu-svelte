@@ -5,6 +5,7 @@
     import { twiemoji as twemoji } from "../utils/twemoji.js";
     import YoutubeComponent from "./youtubeComponent.svelte";
     import { fly, fade } from "svelte/transition";
+    import { backendRoot } from "../api.js";
 
     export let item = { text: "hello test" };
     export let site_config;
@@ -31,16 +32,14 @@
     let delay = 0;
 </script>
 
-<div class="card my-2 {options.show_3x3 ? 'col-md-3' : ''}">
+<div class="card my-2">
     <div class="card-header d-flex">
         <img
-            src={item.avatar
-                ? item.avatar
-                : "http://localhost/onics/style/default.png"}
+            src={item.avatar ? item.avatar : `bkndroot_style/default.png`}
             alt="Avatar de {item.user}"
             class="avatar rounded-circle mr-2"
             on:error={function () {
-                this.src = "http://localhost/onics/style/default.png";
+                this.src = `${backendRoot}style/default.png`;
             }}
         />
         {#if item.reshoutby}
@@ -49,7 +48,7 @@
                 alt="Avatar de {item.reshoutby}"
                 class="avatar rounded-circle mr-2 parent-shout-user-avatar"
                 on:error={function () {
-                    this.src = "http://localhost/onics/style/default.png";
+                    this.src = `${backendRoot}style/default.png`;
                 }}
             />
         {/if}

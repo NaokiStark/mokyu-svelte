@@ -14,6 +14,7 @@
 	import Communities from "./routes/communities.svelte";
 	import Community from "./routes/community.svelte";
 	import Post from "./routes/post.svelte";
+	import Explore from "./routes/Explore.svelte";
 
 	const site_name = "Emburns";
 
@@ -57,16 +58,30 @@
 </svelte:head>
 
 <Router>
-	<Header bind:user_data />
 	<main class="container-fluid mx-0 px-0">
 		<Route path="/">
+			<Header bind:user_data />
+
 			<!-- more weirdest-->
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
 			<Mi {site_config} />
 		</Route>
+
+		<Route path="/explorar">
+			<Header bind:user_data />
+
+			<!-- more weirdest-->
+			<Body
+				style="background: {site_background};background-size: cover;background-position: center;"
+			/>
+			<Explore {site_config} />
+		</Route>
+
 		<Route path="login">
+			<Header bind:user_data />
+
 			<!-- more weirdest-->
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
@@ -75,25 +90,38 @@
 		</Route>
 
 		<Route path="register">
+			<Header bind:user_data />
+
 			<!-- more weirdest-->
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
 			<Register {site_config} />
 		</Route>
+
 		<Route path="shout/:id" let:params>
+			<Header bind:user_data />
+
 			<MiSingle shout_id={params.id} bind:site_config />
 		</Route>
+
 		<Route path="posts">
+			<Header bind:user_data />
+
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
 			<Posts bind:site_config />
 		</Route>
+
 		<Route path="posts/:cat" let:params>
+			<Header bind:user_data />
+
 			<Posts bind:site_config category={params.cat} />
 		</Route>
 		<Route path="comunidades">
+			<Header bind:user_data />
+
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
@@ -101,14 +129,19 @@
 		</Route>
 
 		<Route path="comunidad/:id" let:params>
+			<Header bind:user_data />
 			<Community bind:site_config commid={params.id} />
 		</Route>
 
 		<Route path="tema/:id" let:params>
+			<Header bind:user_data />
+
 			<Post post_id={params.id} bind:site_config />
 		</Route>
 
 		<Route path="/:id" let:params>
+			<Header bind:user_data />
+
 			<Profile username={params.id} bind:site_config />
 		</Route>
 	</main>
@@ -177,5 +210,13 @@
 
 	:global(a:hover) {
 		text-decoration: none !important;
+	}
+
+	:global(.text-link, .text-link:hover, .text-link:active, .text-link:focus) {
+		color: rgb(252, 107, 71) !important;
+		font-weight: bold im !important;
+	}
+	:global(.img-fluid) {
+		max-width: 100%;
 	}
 </style>
