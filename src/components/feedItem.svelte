@@ -12,6 +12,9 @@
     export let options = {
         show_3x3: false,
     };
+    export let from_list = false;
+
+    export let show_shout_unit_modal = (x) => 1;
 
     let reactionsBoxOpen = false;
 
@@ -74,13 +77,29 @@
             {#if item.attachment_type == 1}
                 <!-- imagen -->
                 <p>
-                    <a use:link href="/shout/{item.id}">
-                        <img
-                            src={item.attachment}
-                            alt=" Imagen de publicada por {item.user}"
-                            class="shout-image"
-                        />
-                    </a>
+                    {#if !from_list}
+                        <a use:link href="/shout/{item.id}">
+                            <img
+                                src={item.attachment}
+                                alt=" Imagen de publicada por {item.user}"
+                                class="shout-image"
+                            />
+                        </a>
+                    {:else}
+                        <a
+                            href="/shout/{item.id}"
+                            on:click={(e) => {
+                                e.preventDefault();
+                                show_shout_unit_modal(item.id);
+                            }}
+                        >
+                            <img
+                                src={item.attachment}
+                                alt=" Imagen de publicada por {item.user}"
+                                class="shout-image"
+                            />
+                        </a>
+                    {/if}
                 </p>
             {/if}
 

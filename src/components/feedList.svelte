@@ -5,6 +5,7 @@
     import { fly, fade } from "svelte/transition";
     import { flip } from "svelte/animate";
     import Masonry from "svelte-masonry/Masonry.svelte";
+    import ShoutView from "./shoutView.svelte";
 
     export let site_config;
     let refreshLayout = () => true;
@@ -19,6 +20,14 @@
         show_3x3: false,
     };
     let dumb = [1, 1, 1, 1];
+
+    let from_list = true;
+    let preview_modal_visible = false;
+    let item_selected_id = 0;
+    let show_shout_unit_modal = (id) => {
+        item_selected_id = id;
+        preview_modal_visible = true;
+    };
 </script>
 
 <div class="feed-container">
@@ -33,7 +42,13 @@
                         in:fly={{ opacity: 0, y: -50, duration: 300 }}
                         animate:flip={{ delay: 0, duration: 300 }}
                     >
-                        <FeedItem {item} bind:site_config {options} />
+                        <FeedItem
+                            {item}
+                            bind:site_config
+                            {options}
+                            {from_list}
+                            {show_shout_unit_modal}
+                        />
                     </div>
                 {/each}
             {:else}
@@ -46,12 +61,14 @@
         <Masonry bind:refreshLayout items={feedList.data}>
             {#if feedList.data}
                 {#each feedList.data.slice(0, options.items_per_page) as item (item)}
-                    <div
-                        in:fly={{ opacity: 0, y: -50, duration: 300 }}
-                        animate:flip={{ delay: 0, duration: 300 }}
-                        on:animationend={refreshLayout}
-                    >
-                        <FeedItem {item} bind:site_config {options} />
+                    <div>
+                        <FeedItem
+                            {item}
+                            bind:site_config
+                            {options}
+                            {from_list}
+                            {show_shout_unit_modal}
+                        />
                     </div>
                 {/each}
             {:else}
@@ -62,3 +79,7 @@
         </Masonry>
     {/if}
 </div>
+<ShoutView
+    bind:visible={preview_modal_visible}
+    bind:shout_id={item_selected_id}
+/>
