@@ -166,7 +166,7 @@
         min-height: 2vw;
         max-height: 100%;
         overflow-y: auto;
-
+        max-width: 25vw;
         border-radius: 5px;
     }
 
