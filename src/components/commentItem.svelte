@@ -2,9 +2,10 @@
     import Gicon from "./gicon.svelte";
     import ReactionsBox from "./reactionsBox.svelte";
     import { link } from "svelte-navigator";
-    export let item = { text: "hello test" };
     import { twiemoji as twemoji } from "../utils/twemoji.js";
     import { backendRoot } from "../api.js";
+    import { getElapsed } from "../utils.js";
+    export let item = { text: "hello test" };
     export let site_config;
 
     let reactionsBoxOpen = false;
@@ -13,7 +14,7 @@
 
     $: {
         if (item) {
-            if (item.attachment_type == 4) {
+            if (item.attachmentType == 4) {
                 streaming_attachment_obj = JSON.parse(item.attachment);
             }
         }
@@ -23,7 +24,9 @@
 <div class="card my-2" id="comment-{item.id}">
     <div class="card-header d-flex">
         <img
-            src={item.avatar ? item.avatar : `${backendRoot}style/default.png`}
+            src={item.user.avatar
+                ? item.user.avatar
+                : `${backendRoot}style/default.png`}
             alt="Avatar de {item.user}"
             class="avatar rounded-circle mr-2"
             on:error={function () {
@@ -32,19 +35,20 @@
         />
         <div class="d-flex flex-column">
             <span class="user-info">
-                <a use:link href="/{item.user}">{item.user}</a>
+                <a use:link href="/{item.user.username}">{item.user.username}</a
+                >
             </span>
             <small class="date">
                 <a use:link href="/shout/{item.postid}#comment-{item.id}"
-                    >{item.elapsed}</a
+                    >{getElapsed(item.created)}</a
                 >
             </small>
         </div>
     </div>
     <div class="card-body">
         <p class="card-text" use:twemoji>{@html item.text}</p>
-        {#if item.attachment_type != "0"}
-            {#if item.attachment_type == 1}
+        {#if item.attachmentType != "0"}
+            {#if item.attachmentType == 1}
                 <!-- imagen -->
                 <p>
                     <a use:link href="/shout/{item.postid}#comment-{item.id}">
@@ -57,7 +61,7 @@
                 </p>
             {/if}
 
-            {#if item.attachment_type == 4}
+            {#if item.attachmentType == 4}
                 <!-- streaming service -->
                 {#if streaming_attachment_obj.provider == "www.youtube.com"}
                     <iframe
@@ -95,7 +99,10 @@
     </div>
     {#if reactionsBoxOpen}
         {#if site_config}
-            <ReactionsBox bind:reaction_list={site_config.reactions} />
+            <ReactionsBox
+                bind:reaction_list={site_config.reactions}
+                on:selected={() => (reactionsBoxOpen = !reactionsBoxOpen)}
+            />
         {/if}
     {/if}
 </div>

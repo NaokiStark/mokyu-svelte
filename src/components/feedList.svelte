@@ -11,6 +11,8 @@
     let refreshLayout = () => true;
     export let feedList = { info: { page: 0 }, data: [] };
 
+    export let user_data;
+
     //$: feedList.data, refreshLayout();
 
     export let options = {
@@ -26,21 +28,22 @@
     let item_selected_id = 0;
     let show_shout_unit_modal = (id) => {
         item_selected_id = id;
-        preview_modal_visible = true;
+        // preview_modal_visible = true;
     };
 </script>
 
 <div class="feed-container">
     {#if options.sharebox}
-        <ShareBox bind:site_config bind:feedList />
+        <ShareBox bind:site_config bind:feedList bind:user_data />
     {/if}
     {#if !options.show_3x3}
-        <div class="row">
+        <div class="">
             {#if feedList.data}
                 {#each feedList.data.slice(0, options.items_per_page) as item (item)}
                     <div
                         in:fly={{ opacity: 0, y: -50, duration: 300 }}
                         animate:flip={{ delay: 0, duration: 300 }}
+                        class="p-0"
                     >
                         <FeedItem
                             {item}

@@ -11,6 +11,8 @@
     import ModalBtnClose from "./modals/modal-btn-close.svelte";
     import Gicon from "./gicon.svelte";
     import { twiemoji as twemoji } from "../utils/twemoji.js";
+    import { getElapsed } from "../utils.js";
+    import { onMount } from "svelte";
 
     export let visible = true;
     export let item;
@@ -28,19 +30,59 @@
     });
 
     $: get_shout(shout_id).then((x) => {
-        item = x.data;
+        item = x;
+        refreshLoves();
     });
 
     $: {
         if (item) {
-            if (item.attachment_type == 4) {
+            if (item.attachmentType == 4) {
                 streaming_attachment_obj = JSON.parse(item.attachment);
             }
         }
     }
 
+    let reactionsCount = {};
+    let reactions_box_enabled = false;
+    let reactionsBoxOpen = false;
+
+    let main_box;
+
+    onMount(refreshLoves);
+
     function get_shout(sid) {
-        return api_request(`feed/${sid}?comments`);
+        if (sid == 0) {
+            return Promise.reject();
+        }
+        item = null;
+
+        return api_request(`Feed/?id=${sid}`);
+    }
+
+    function refreshLoves() {
+        reactionsCount = {};
+        if (item) {
+            for (let a = 0; a < item.lovesList.length; a++) {
+                let element = item.lovesList[a];
+                if (!reactionsCount[element.reaction.reactionEmoji]) {
+                    reactionsCount[element.reaction.reactionEmoji] = 1;
+                } else {
+                    reactionsCount[element.reaction.reactionEmoji] += 1;
+                }
+            }
+        }
+    }
+
+    function getReactionsByEmoji(emoji) {
+        let reactors = [];
+
+        for (let a = 0; a < item.lovesList.length; a++) {
+            let element = item.lovesList[a];
+            if (element.reaction.reactionEmoji == emoji) {
+                reactors = [...reactors, element.user];
+            }
+        }
+        return reactors;
     }
 </script>
 
@@ -48,6 +90,12 @@
     <div
         class="modal-background modal-shout-preview"
         transition:fade={{ duration: 200 }}
+        bind:this={main_box}
+        on:click={(e) => {
+            if (e.target == main_box) {
+                toggle_visible();
+            }
+        }}
     >
         <div class="close-modal">
             <ModalBtnClose>
@@ -57,20 +105,18 @@
         {#if item}
             <div class="attachment-fullscreen">
                 <div class="attachment-content">
-                    {#if item.attachment_type != "0"}
-                        {#if item.attachment_type == 1}
+                    {#if item.attachmentType != "0"}
+                        {#if item.attachmentType == 1}
                             <!-- imagen -->
-
-                            <a use:link href="/shout/{item.id}">
-                                <img
-                                    src={item.attachment}
-                                    alt=" Imagen de publicada por {item.user}"
-                                    class="shout-image"
-                                />
-                            </a>
+                            <a
+                                use:link
+                                href="/shout/{item.id}"
+                                style="background-image: url({item.attachment});"
+                                class="shout-image"
+                            />
                         {/if}
 
-                        {#if item.attachment_type == 4}
+                        {#if item.attachmentType == 4}
                             <!-- streaming service -->
                             {#if streaming_attachment_obj.provider == "www.youtube.com"}
                                 <YoutubeComponent
@@ -90,19 +136,19 @@
             {#if item}
                 <div class="card-header d-flex">
                     <img
-                        src={item.avatar
-                            ? item.avatar
-                            : `bkndroot_style/default.png`}
-                        alt="Avatar de {item.user}"
+                        src={item.user.avatar
+                            ? item.user.avatar
+                            : `${backendRoot}style/default.png`}
+                        alt="Avatar de {item.user.username}"
                         class="avatar rounded-circle mr-2"
                         on:error={function () {
                             this.src = `${backendRoot}style/default.png`;
                         }}
                     />
-                    {#if item.reshoutby}
+                    {#if item.parentUser}
                         <img
-                            src={item.reshoutavatar}
-                            alt="Avatar de {item.reshoutby}"
+                            src={item.parentUser.avatar}
+                            alt="Avatar de {item.parentUser.username}"
                             class="avatar rounded-circle mr-2 parent-shout-user-avatar"
                             on:error={function () {
                                 this.src = `${backendRoot}style/default.png`;
@@ -111,26 +157,65 @@
                     {/if}
                     <div class="d-flex flex-column">
                         <span class="user-info">
-                            <a use:link href="/{item.user}">{item.user}</a>
-                            {#if item.reshoutby}
+                            <a use:link href="/{item.user.username}"
+                                >{item.user.username}</a
+                            >
+                            {#if item.parentUser}
                                 <small>
                                     compartió de <a
                                         use:link
-                                        href="/{item.reshoutby}"
-                                        >{item.reshoutby}</a
+                                        href="/{item.parentUser.username}"
+                                        >{item.parentUser.username}</a
                                     ></small
                                 >
                             {/if}</span
                         >
                         <small class="date">
                             <a use:link href="/shout/{item.id}"
-                                >{item.elapsed}</a
+                                >{getElapsed(item.created)}</a
                             >
                         </small>
                     </div>
                 </div>
+
                 <div class="card-body">
                     <p class="card-text" use:twemoji>{@html item.text}</p>
+                </div>
+
+                <div class="card-footer">
+                    {#if item}
+                        <div class="d-flex justify-content-between ">
+                            <div class="users-reactions d-flex flex-row">
+                                {#each Object.entries(reactionsCount) as [emoji, count]}
+                                    <span
+                                        use:twemoji
+                                        on:click={() =>
+                                            console.log(
+                                                getReactionsByEmoji(emoji)
+                                            )}
+                                    >
+                                        <span class="reaction-count-emoji">
+                                            {emoji}
+                                        </span>
+                                        <span
+                                            class="badge badge-primary reaction-count"
+                                        >
+                                            {count}
+                                        </span>
+                                    </span>
+                                {/each}
+                            </div>
+                            {#if reactions_box_enabled}
+                                <Gicon
+                                    title="Reacciones"
+                                    icon="add_reaction"
+                                    class="cursor-pointer text-muted"
+                                    on:click={() =>
+                                        (reactionsBoxOpen = !reactionsBoxOpen)}
+                                />
+                            {/if}
+                        </div>
+                    {/if}
                 </div>
 
                 <CommentsList
@@ -189,18 +274,18 @@
         justify-content: center;
     }
     .attachment-content {
-        max-width: 100%;
-        max-height: 100%;
-        display: contents;
+        width: 100%;
+        height: 100%;
+        display: block;
     }
     .shout-image {
-        max-width: 100%;
-        max-height: 100%;
-    }
-    .attachment-content a {
-        max-height: 100%;
-        width: 100%;
-        display: contents;
+        width: 80%;
+        height: 100%;
+        display: block;
+        margin: 0 auto;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
     }
 
     .close-modal {

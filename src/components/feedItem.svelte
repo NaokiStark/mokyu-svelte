@@ -6,8 +6,10 @@
     import YoutubeComponent from "./youtubeComponent.svelte";
     import { fly, fade } from "svelte/transition";
     import { backendRoot } from "../api.js";
+    import { getElapsed } from "../utils";
+    import { onMount } from "svelte";
 
-    export let item = { text: "hello test" };
+    export let item;
     export let site_config;
     export let options = {
         show_3x3: false,
@@ -20,9 +22,24 @@
 
     let streaming_attachment_obj = {};
 
+    let reactionsCount = {};
+
+    onMount(() => {
+        if (item) {
+            for (let a = 0; a < item.lovesList.length; a++) {
+                let element = item.lovesList[a];
+                if (!reactionsCount[element.reaction.reactionEmoji]) {
+                    reactionsCount[element.reaction.reactionEmoji] = 1;
+                } else {
+                    reactionsCount[element.reaction.reactionEmoji] += 1;
+                }
+            }
+        }
+    });
+
     $: {
         if (item) {
-            if (item.attachment_type == 4) {
+            if (item.attachmentType == 4) {
                 streaming_attachment_obj = JSON.parse(item.attachment);
             }
         }
@@ -30,25 +47,39 @@
 
     let reaction_test = [{ "❤️": 10 }];
 
-    let reactions_box_enabled = false;
+    let reactions_box_enabled = true;
 
     let delay = 0;
+
+    function getReactionsByEmoji(emoji) {
+        let reactors = [];
+
+        for (let a = 0; a < item.lovesList.length; a++) {
+            let element = item.lovesList[a];
+            if (element.reaction.reactionEmoji == emoji) {
+                reactors = [...reactors, element.user];
+            }
+        }
+        return reactors;
+    }
 </script>
 
 <div class="card my-2">
     <div class="card-header d-flex">
         <img
-            src={item.avatar ? item.avatar : `bkndroot_style/default.png`}
-            alt="Avatar de {item.user}"
+            src={item.user.avatar
+                ? item.user.avatar
+                : `bkndroot_style/default.png`}
+            alt="Avatar de {item.username}"
             class="avatar rounded-circle mr-2"
             on:error={function () {
                 this.src = `${backendRoot}style/default.png`;
             }}
         />
-        {#if item.reshoutby}
+        {#if item.parentUser}
             <img
-                src={item.reshoutavatar}
-                alt="Avatar de {item.reshoutby}"
+                src={item.parentUser.avatar}
+                alt="Avatar de {item.parentUser.username}"
                 class="avatar rounded-circle mr-2 parent-shout-user-avatar"
                 on:error={function () {
                     this.src = `${backendRoot}style/default.png`;
@@ -57,31 +88,38 @@
         {/if}
         <div class="d-flex flex-column">
             <span class="user-info">
-                <a use:link href="/{item.user}">{item.user}</a>
-                {#if item.reshoutby}
+                <a use:link href="/{item.user.username}">{item.user.username}</a
+                >
+                {#if item.parentUser}
                     <small>
-                        compartió de <a use:link href="/{item.reshoutby}"
-                            >{item.reshoutby}</a
+                        compartió de <a
+                            use:link
+                            href="/{item.parentUser.username}"
+                            >{item.parentUser.username}</a
                         ></small
                     >
                 {/if}</span
             >
             <small class="date">
-                <a use:link href="/shout/{item.id}">{item.elapsed}</a>
+                <a use:link href="/shout/{item.id}"
+                    >{getElapsed(item.created)}</a
+                >
             </small>
         </div>
     </div>
     <div class="card-body">
         <p class="card-text" use:twemoji>{@html item.text}</p>
-        {#if item.attachment_type != "0"}
-            {#if item.attachment_type == 1}
+
+        {#if item.attachmentType != 0}
+            {#if item.attachmentType == 1}
                 <!-- imagen -->
                 <p>
                     {#if !from_list}
                         <a use:link href="/shout/{item.id}">
                             <img
                                 src={item.attachment}
-                                alt=" Imagen de publicada por {item.user}"
+                                alt=" Imagen de publicada por {item.user
+                                    .username}"
                                 class="shout-image"
                             />
                         </a>
@@ -89,13 +127,14 @@
                         <a
                             href="/shout/{item.id}"
                             on:click={(e) => {
-                                e.preventDefault();
-                                show_shout_unit_modal(item.id);
+                                /*e.preventDefault();
+                                show_shout_unit_modal(item.id);*/
                             }}
                         >
                             <img
                                 src={item.attachment}
-                                alt=" Imagen de publicada por {item.user}"
+                                alt=" Imagen de publicada por {item.user
+                                    .username}"
                                 class="shout-image"
                             />
                         </a>
@@ -103,7 +142,7 @@
                 </p>
             {/if}
 
-            {#if item.attachment_type == 4}
+            {#if item.attachmentType == 4}
                 <!-- streaming service -->
                 {#if streaming_attachment_obj.provider == "www.youtube.com"}
                     <YoutubeComponent video_info={streaming_attachment_obj} />
@@ -112,31 +151,39 @@
         {/if}
     </div>
     <div class="card-footer d-flex justify-content-between ">
-        {#if item.comments_count}
+        {#if item.comments.length}
             <a use:link href="/shout/{item.id}">
                 <Gicon
                     title="Comentarios"
                     icon="forum"
                     class="cursor-pointer text-muted"
                 />
-                {item.comments_count}
+                {item.comments.length}
             </a>
         {:else}
-            <span />
+            <a use:link href="/shout/{item.id}">
+                <Gicon
+                    title="Comentarios"
+                    icon="forum"
+                    class="cursor-pointer text-muted"
+                />
+                0
+            </a>
         {/if}
         <div class="d-flex justify-content-between ">
             <div class="users-reactions d-flex flex-row">
-                {#each reaction_test as reactn}
-                    {#if reactn[Object.keys(reactn)[0]] > 0}
-                        <span use:twemoji>
-                            <span class="reaction-count-emoji">
-                                {Object.keys(reactn)[0]}
-                            </span>
-                            <span class="badge badge-primary reaction-count">
-                                {reactn[Object.keys(reactn)[0]]}
-                            </span>
+                {#each Object.entries(reactionsCount) as [emoji, count]}
+                    <span
+                        use:twemoji
+                        on:click={() => console.log(getReactionsByEmoji(emoji))}
+                    >
+                        <span class="reaction-count-emoji">
+                            {emoji}
                         </span>
-                    {/if}
+                        <span class="badge badge-primary reaction-count">
+                            {count}
+                        </span>
+                    </span>
                 {/each}
             </div>
             {#if reactions_box_enabled}
@@ -151,7 +198,10 @@
     </div>
 
     {#if reactionsBoxOpen && site_config}
-        <ReactionsBox bind:reaction_list={site_config.reactions} />
+        <ReactionsBox
+            bind:reaction_list={site_config.reactions}
+            on:selected={() => (reactionsBoxOpen = !reactionsBoxOpen)}
+        />
     {/if}
 </div>
 

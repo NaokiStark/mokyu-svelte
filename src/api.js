@@ -92,36 +92,45 @@ export const checkLogin = async function () {
         return false;
     }
 
-    if (!localStorage.userData) {
-        let chkLogin = await api_request('checkLogin');
-        if (chkLogin.status == 1) {
-            localStorage.userData = JSON.stringify(chkLogin.data);
-            return true;
-        }
-        return false;
+    if (localStorage.userData && localStorage.token) {
+        return true;
     }
     else {
-        let localLogin = {};
-        try {
-            localLogin = JSON.parse(localStorage.userData);
-        }
-        catch {
-            localStorage.userData = '';
-            return false;
-        }
+        return false;
+    }
 
-        if (localLogin.checkTimeout >= Date.now()) {
-            // Check login again
+
+    /*
+        if (!localStorage.userData) {
             let chkLogin = await api_request('checkLogin');
-            if (chkLogin.result) {
-                localStorage.userData = JSON.stringify(chkLogin.result.data);
+            if (chkLogin.status == 1) {
+                localStorage.userData = JSON.stringify(chkLogin.data);
                 return true;
             }
             return false;
         }
         else {
-            return true;
-        }
-
-    }
+            let localLogin = {};
+            try {
+                localLogin = JSON.parse(localStorage.userData);
+            }
+            catch {
+                localStorage.userData = '';
+                return false;
+            }
+    
+            if (localLogin.checkTimeout >= Date.now()) {
+                // Check login again
+                let chkLogin = await api_request('checkLogin');
+                if (chkLogin.result) {
+                    localStorage.userData = JSON.stringify(chkLogin.result.data);
+                    return true;
+                }
+                return false;
+            }
+            else {
+                return true;
+            }
+    
+        }*/
 }

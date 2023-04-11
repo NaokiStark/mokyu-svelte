@@ -1,6 +1,10 @@
 <script>
     import { twiemoji as twemoji } from "../utils/twemoji.js";
     import { fly } from "svelte/transition";
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
+
     export let options = {};
     export let reaction_list;
 </script>
@@ -15,10 +19,11 @@
                 {#each reaction_list as reaction}
                     <span
                         class="cursor-pointer mx-1"
-                        title={reaction.reaction_text}
+                        title={reaction.reactionText}
+                        on:click={() => dispatch("selected")}
                         use:twemoji
                     >
-                        {reaction.reaction_emoji}
+                        {reaction.reactionEmoji}
                     </span>
                 {/each}
             {/if}

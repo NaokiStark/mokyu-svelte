@@ -1,19 +1,19 @@
 <script>
     import { fly } from "svelte/transition";
     export let site_config;
+    import { Body } from "svelte-body"; // weird
 </script>
+
+<Body style="background: #191d21;" />
 
 <div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
     <div class="col-xxl-3" />
     <div class="col-xxl-6 text-center pt-5 mx-0 px-0">
-        <h3>Registro a embe... mokyu?</h3>
-        <p>
-            El nombre no lo sé todavía, pero pone tus datos que no vamos a hacer
-            nada con eso, dale man
-        </p>
+        <h3>Registro a Emburns</h3>
+        <p>Poné tus datos que no vamos a hacer nada con eso, dale man</p>
         <div class="row mx-0">
-            <div class="col-3 m-0 p-0" />
-            <div class="col-6 ">
+            <div class="col-md-3 m-0 p-0" />
+            <div class="col-md-6 p-0">
                 <form class="text-left register bg-dark">
                     <div class="mb-3">
                         <label for="username" class="form-label">Usuario</label>
@@ -54,8 +54,14 @@
                     </div>
                 </form>
             </div>
-            <div class="col-3 m-0 p-0" />
+            <div class="col-md-3 m-0 p-0" />
         </div>
     </div>
     <div class="col-xxl-3" />
 </div>
+
+<style>
+    .register {
+        max-width: 97%;
+    }
+</style>

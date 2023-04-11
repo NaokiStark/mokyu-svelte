@@ -7,6 +7,7 @@
     import Gicon from "../components/gicon.svelte";
 
     export let site_config;
+    export let user_data;
 
     let feedList = {
         info: { page: 0 },
@@ -34,9 +35,9 @@
 */
 
     function infiniteHandler({ detail: { loaded, complete } }) {
-        api_request(`publico?limit=10&page=${page}`).then((x) => {
-            if (x.data.length > 0) {
-                feedList.data = [...feedList.data, ...x.data];
+        api_request(`Feed/list?page=${page}`).then((x) => {
+            if (x.length > 0) {
+                feedList.data = [...feedList.data, ...x];
                 page += 1;
                 feedList.info.page = page;
 
@@ -49,35 +50,12 @@
 </script>
 
 <div class="row row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
-    <div class="col-md-3">
-        <!-- sidebar -->
-        <div class="card mt-2 sticky-top">
-            <div class="card-header d-flex">
-                <img
-                    src="http://localhost/onics/uploads/1-1663916408_avatar.png"
-                    alt="Nekita's avatar"
-                    class="avatar rounded-circle mr-2"
-                />
-                <div class="d-flex flex-column">
-                    <span class="user-info">Nekita</span>
-                    <small class="date">8.500 puntos</small>
-                </div>
-            </div>
-            <div class="card-body">
-                <p class="card-text">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                    Debitis saepe dolorem facere numquam, optio, nobis corrupti
-                    minima sit officiis mollitia nemo ut maiores ipsa modi quo
-                    vel quam sapiente delectus.
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <FeedList {feedList} bind:site_config />
+    <div class="col-lg-1 col-xl-2" />
+    <div class="col-lg-7 col-xl-5">
+        <FeedList {feedList} bind:site_config bind:user_data />
         <InfiniteLoading spinner="wavedots" on:infinite={infiniteHandler} />
     </div>
-    <div class="col-md-3">
+    <div class="col-lg-3 col-xl-3">
         <div class="card mt-2">
             <div class="card-header">
                 <Gicon icon="tag" /> Tendencias

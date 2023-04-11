@@ -10,15 +10,16 @@
     import Gicon from "../components/gicon.svelte";
     export let site_config;
     export let shout_id = 0;
+    export let user_data;
 
     let item = null;
 
     $: get_shout(shout_id).then((x) => {
-        item = x.data;
+        item = x;
     });
 
     function get_shout(sid) {
-        return api_request(`feed/${sid}?comments`);
+        return api_request(`Feed/?id=${sid}`);
     }
 
     let hashtags = [
@@ -29,26 +30,39 @@
         "#Toringa",
         "#ElFacha",
     ];
+
+    let commentListOptions = {
+        infinite_scroll: true,
+        items_per_page: 2000,
+        sharebox: user_data ? true : false,
+        show_3x3: false,
+    };
 </script>
 
 {#if item}
-    {#if item.background}
+    {#if item.user.background}
         <Body
-            style=" background: url('{item.background}') no-repeat fixed;background-size: cover;background-position: center;"
+            style=" background: url('{item.user
+                .background}') no-repeat fixed;background-size: cover;background-position: center;"
         />
     {/if}
 {/if}
 <div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
-    <div class="col-lg-1" />
-    <div class="col-lg-6 mt-2 mx-0 px-0">
+    <div class="col-lg-1 col-xl-2" />
+    <div class="col-lg-5 col-xl-5 mt-2 mx-0 px-0">
         {#if item}
             <FeedItem {item} bind:site_config />
-            <CommentsList feedList={{ data: item.comments }} bind:site_config />
+            <CommentsList
+                feedList={{ data: item.comments }}
+                bind:site_config
+                bind:user_data
+                bind:options={commentListOptions}
+            />
         {:else}
             <FeedItemPlaceholder />
         {/if}
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-3 col-xl-3">
         <div class="sticky-top">
             {#if item}
                 <div
@@ -57,15 +71,19 @@
                 >
                     <div
                         class="card-header d-flex flex-column flex-wrap-reverse align-items-end justify-content-end card-header-with-cover"
-                        style="background-image: url('{item.cover}')"
+                        style="background-image: url('{item.user.cover}')"
                     >
                         <div class="d-flex flex-row card-user-info">
-                            <a class="text-white" use:link href="/{item.user}">
+                            <a
+                                class="text-white"
+                                use:link
+                                href="/{item.user.username}"
+                            >
                                 <img
-                                    src={item.avatar
-                                        ? item.avatar
+                                    src={item.user.avatar
+                                        ? item.user.avatar
                                         : `${backendRoot}style/default.png`}
-                                    alt="Avatar de {item.user}"
+                                    alt="Avatar de {item.user.username}"
                                     class="avatar rounded-circle mr-2"
                                     on:error={function () {
                                         this.src = `${backendRoot}style/default.png`;
@@ -77,15 +95,15 @@
                                     <a
                                         class="text-white"
                                         use:link
-                                        href="/{item.user}"
+                                        href="/{item.user.username}"
                                     >
-                                        <b>{item.user}</b>
+                                        <b>{item.user.username}</b>
                                     </a></span
                                 >
                                 <small>
-                                    <b>{item.rank_info.fullname}</b>
+                                    <b>{item.user.rankName}</b>
                                     <span class="name"
-                                        >({item.rank} karma)
+                                        >({item.user.rank} karma)
                                     </span>
                                 </small>
                             </div>
@@ -93,7 +111,7 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text">
-                            {item.quote}
+                            {item.user.quote}
                         </p>
                     </div>
                 </div>

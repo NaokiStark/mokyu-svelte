@@ -5,6 +5,7 @@
 
     export let site_config;
     export let feedList = [];
+    export let user_data;
 
     let modalError = false;
     let errorMessage = "There is not errors today";
@@ -13,31 +14,20 @@
         text: "",
         attachment_type: 0,
         attachment: "",
-        signature: "",
-        user_key: site_config ? site_config.tknhash : "",
     };
-    $: shout_info.user_key = site_config ? site_config.tknhash : "";
 
     async function shout() {
-        let result = await api_request(
-            "shout",
-            "post",
-            Object.keys(shout_info)
-                .map((key) => key + "=" + encodeURIComponent(shout_info[key]))
-                .join("&")
-        );
+        let result = await api_request("feed", "post", shout_info);
 
         if (result.status == 0) {
-            errorMessage = result.text ?? result.data;
+            errorMessage = result.text ?? result.item;
             modalError = true;
         } else {
-            feedList.data = [result.data, ...feedList.data];
+            feedList.data = [result.item, ...feedList.data];
             shout_info = {
                 text: "",
                 attachment_type: 0,
                 attachment: "",
-                signature: "",
-                user_key: site_config ? site_config.tknhash : "",
             };
         }
     }
@@ -47,11 +37,15 @@
     <div class="card-body">
         <!--  e  -->
         <div class="sharebox-textarea d-flex flex-row">
-            <img
-                src="http://localhost/onics/uploads/1-1663916408_avatar.png"
-                alt="Nekita's avatar"
-                class="avatar rounded-circle mr-2"
-            />
+            {#if user_data}
+                <img
+                    src={user_data.avatar}
+                    alt="{user_data.username}'s avatar"
+                    class="avatar rounded-circle mr-2"
+                />
+            {:else}
+                <div class="fake_avatar rounded-circle mr-2" />
+            {/if}
             <div
                 class="form-control sharebox-area"
                 contenteditable="true"
@@ -99,9 +93,15 @@
 </ErrorModal>
 
 <style>
-    .avatar {
+    .avatar,
+    .fake_avatar {
         width: 50px;
         height: 50px;
+    }
+
+    .fake_avatar {
+        background-color: #333;
+        display: inline-block;
     }
     .sharebox-attachments {
         margin-left: 55px;

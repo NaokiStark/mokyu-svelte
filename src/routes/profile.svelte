@@ -8,24 +8,25 @@
 
     import { Body } from "svelte-body"; // weird
     import { each } from "svelte/internal";
-    export let site_config;
 
+    export let site_config;
     export let username;
+    export let user_data;
 
     let item = null;
     let user_stats = null;
 
     $: get_user(username).then((x) => {
-        item = x.data;
+        item = x[0];
     });
 
     $: get_stats(item).then((x) => {
-        user_stats = x.data;
+        user_stats = x;
         refreshInfinite();
     });
 
     function get_user(sid) {
-        return api_request(`username/${sid}`);
+        return api_request(`Users/name?username=${sid}`);
     }
 
     function get_stats(sid) {
@@ -38,6 +39,13 @@
     let feedList = {
         info: { page: 0 },
         data: [],
+    };
+
+    let feedListOptions = {
+        infinite_scroll: true,
+        items_per_page: 2000,
+        sharebox: false,
+        show_3x3: false,
     };
 
     let page = 0;
@@ -60,10 +68,10 @@
     }
 
     function infiniteHandler({ detail: { loaded, complete } }) {
-        api_request(`feed_profile/${item.id}?limit=10&page=${page}`).then(
+        api_request(`Feed/userid?id=${item.id}&limit=10&page=${page}`).then(
             (x) => {
-                if (x.data.length > 0) {
-                    feedList.data = [...feedList.data, ...x.data];
+                if (x.length > 0) {
+                    feedList.data = [...feedList.data, ...x];
                     page += 1;
                     feedList.info.page = page;
                     loaded();
@@ -83,31 +91,33 @@
     {/if}
 {/if}
 <div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
-    <div class="col-lg-1" />
-    <div class="col-lg-7 mt-2 mx-0 px-0">
+    <div class="col-lg-1 col-xl-2" />
+    <div class="col-lg-5 col-xl-5 mt-2 mx-0 px-0">
         {#if item}
             <div class="card mt2">
                 <div
                     class="d-flex flex-column flex-wrap-reverse align-items-end justify-content-end card-header-with-cover"
                     style="background: linear-gradient( 0deg, #212529 0%, rgba(255, 255, 255, 0) 37% ), url('{item.cover}') no-repeat; background-size:cover; background-position: center;"
                 >
-                    <div class="d-flex flex-row card-user-info">
+                    <div
+                        class="d-flex flex-column flex-lg-row card-user-info flex-wrap align-content-center align-content-lg-start justify-content-center justify-content-lg-start align-items-center align-items-lg-center"
+                    >
                         <img
                             src={item.avatar
                                 ? item.avatar
                                 : `${backendRoot}style/default.png`}
-                            alt="Avatar de {item.user}"
+                            alt="Avatar de {item.username}"
                             class="avatar main-avatar rounded-circle mr-2"
                             on:error={function () {
                                 this.src = `${backendRoot}style/default.png`;
                             }}
                         />
                         <div
-                            class="d-flex flex-column text-white user-head-data"
+                            class="d-flex flex-column text-white user-head-data align-items-center align-items-lg-start p-0 pl-md-2"
                         >
                             <h3 class="user-info">
                                 <b>
-                                    {item.user}
+                                    {item.username}
                                     {#if item.donation_heart}
                                         <small
                                             class="d-inline-flex cursor-pointer"
@@ -126,7 +136,7 @@
                                 </b>
                             </h3>
                             <span>
-                                <b>{item.rank_info.fullname}</b>
+                                <b>{item.rankName}</b>
                                 <small class="name">({item.rank} karma) </small>
                             </span>
                         </div>
@@ -134,31 +144,50 @@
                 </div>
                 <div class="card-body user-bio-more">
                     <div class="d-flex flex-column">
-                        <div class="d-flex flex-row justify-content-end">
-                            <button type="button" class="btn btn-primary mr-1">
-                                <Gicon icon="person_add" />
-                                Seguir
-                            </button>
-                            <button
-                                type="button"
-                                class="btn btn-danger mr-1 text-white"
-                            >
-                                <Gicon icon="block" /> Bloquear
-                            </button>
-                            <button
-                                type="button"
-                                class="btn btn-warning"
-                                title="Denunciar"
-                            >
-                                <Gicon icon="flag" />
-                            </button>
+                        <div
+                            class="quote mb-3 d-flex flex-row justify-content-center justify-content-lg-start"
+                        >
+                            <i>{item.quote}</i>
                         </div>
-                        <i>{item.quote}</i>
+                        <div
+                            class="d-flex flex-row justify-content-center justify-content-lg-end"
+                        >
+                            {#if item.id != (user_data ?? { id: 0 }).id}
+                                <button
+                                    type="button"
+                                    class="btn btn-primary mr-1"
+                                >
+                                    <Gicon icon="person_add" />
+                                    Seguir
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-danger mr-1 text-white"
+                                >
+                                    <Gicon icon="block" /> Bloquear
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-warning"
+                                    title="Denunciar"
+                                >
+                                    <Gicon icon="flag" />
+                                </button>
+                            {:else}
+                                <button
+                                    type="button"
+                                    class="btn btn-primary mr-1"
+                                >
+                                    <Gicon icon="edit" />
+                                    Editar perfil
+                                </button>
+                            {/if}
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- feedList -->
-            <FeedList {feedList} bind:site_config />
+            <FeedList {feedList} bind:site_config options={feedListOptions} />
             <InfiniteLoading
                 spinner="wavedots"
                 on:infinite={infiniteHandler}
@@ -166,7 +195,7 @@
             />
         {/if}
     </div>
-    <div class="col-lg-3">
+    <div class="col-lg-3 col-xxl-3">
         <div class="sticky-top">
             <div class="card mt-2">
                 <div class="card-header">
@@ -222,7 +251,7 @@
                         class="medal d-flex flex-column flex-wrap text-center"
                         title="Es parte del Dev team!"
                     >
-                        <span class="medal-icon  text-center">
+                        <span class="medal-icon text-center">
                             <Gicon icon="code" />
                         </span>
                         <span>Dev</span>

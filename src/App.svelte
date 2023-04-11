@@ -19,10 +19,10 @@
 	const site_name = "Emburns";
 
 	let site_config = {};
-	let user_data = {};
+	let user_data = null;
 	onMount(async () => {
 		site_config = await api_request("site_config");
-		site_config = site_config.data;
+		site_config = site_config;
 		let response_user_data = await checkLogin();
 		if (response_user_data) {
 			user_data = JSON.parse(localStorage.userData);
@@ -66,7 +66,12 @@
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
-			<Mi {site_config} />
+
+			{#if user_data}
+				<Mi {site_config} bind:user_data />
+			{:else}
+				<Explore {site_config} bind:user_data />
+			{/if}
 		</Route>
 
 		<Route path="/explorar">
@@ -76,7 +81,7 @@
 			<Body
 				style="background: {site_background};background-size: cover;background-position: center;"
 			/>
-			<Explore {site_config} />
+			<Explore {site_config} bind:user_data />
 		</Route>
 
 		<Route path="login">
@@ -102,7 +107,7 @@
 		<Route path="shout/:id" let:params>
 			<Header bind:user_data />
 
-			<MiSingle shout_id={params.id} bind:site_config />
+			<MiSingle shout_id={params.id} bind:site_config bind:user_data />
 		</Route>
 
 		<Route path="posts">
@@ -142,7 +147,7 @@
 		<Route path="/:id" let:params>
 			<Header bind:user_data />
 
-			<Profile username={params.id} bind:site_config />
+			<Profile username={params.id} bind:site_config bind:user_data />
 		</Route>
 	</main>
 </Router>
@@ -156,6 +161,9 @@
 	/* PUT ALL THIS STYLES LATER IN A FILE, please, ADD VARS */
 	:global(*:not(.material-icons)) {
 		font-family: "Nunito", sans-serif !important;
+	}
+	:global(.btn) {
+		border: 1px solid rgba(255, 255, 255, 0.125) !important;
 	}
 	:global(.btn-primary) {
 		background-color: rgb(252, 107, 71) !important;
@@ -218,5 +226,15 @@
 	}
 	:global(.img-fluid) {
 		max-width: 100%;
+	}
+
+	:global(
+			.btn-primary.focus,
+			.btn-primary:focus,
+			h1:focus,
+			h3:focus,
+			h4:focus
+		) {
+		box-shadow: none !important;
 	}
 </style>

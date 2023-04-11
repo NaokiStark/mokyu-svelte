@@ -3,10 +3,11 @@
     import { api_request } from "../api.js";
     import ErrorModal from "../components/modals/errorModal.svelte";
     import { navigate } from "svelte-routing";
+    import { Body } from "svelte-body"; // weird
 
     export let site_config;
 
-    let userlogin = { "9kro": "", "04529f": "" };
+    let userlogin = { user: "", password: "" };
     let objs = { user: null, password: null, send: null };
 
     let modalError = false;
@@ -15,47 +16,43 @@
     async function issueLogin() {
         objs.user = objs.password = objs.send = true;
 
-        let result = await api_request(
-            "login",
-            "post",
-            `9kro=${userlogin["9kro"]}&04529f=${userlogin["04529f"]}`
-        );
-        if (result.status == 0) {
-            // show modal
-            localStorage.token = null;
-            errorMessage = "Datos incorrectos.";
-            modalError = true;
-        } else {
-            localStorage.token = result.data;
+        let result = await api_request("user/login", "post", userlogin);
+        if (typeof result == "object") {
+            localStorage.token = result.token;
+            localStorage.userData = JSON.stringify(result.userData);
             location.href = "/";
+        } else {
+            localStorage.clear();
+            errorMessage = result;
+            modalError = true;
         }
+
         setTimeout(() => {
             objs.user = objs.password = objs.send = null;
         }, 1000);
     }
 </script>
 
+<Body style="background: #191d21;" />
+
 <div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
     <div class="col-xxl-3" />
     <div class="col-xxl-6 text-center pt-5 mx-0 px-0">
-        <h3>Bienvenido a embe... mokyu?</h3>
-        <p>
-            El nombre no lo sé todavía, pero pone tu nombre de usuario y
-            contraseña y eso dale man
-        </p>
+        <h3>Ingresar a Emburns</h3>
+        <p>Poné tu nombre de usuario y contraseña y eso dale man</p>
         <div class="row mx-0">
-            <div class="col-3" />
-            <div class="col-6">
+            <div class="col-md-3" />
+            <div class="col-md-6 p-0">
                 <form class="text-left login bg-dark">
                     <div class="mb-3">
                         <label for="username" class="form-label">Usuario</label>
                         <input
-                            type="email"
+                            type="text"
                             name="username"
                             id="username"
                             class="form-control"
                             placeholder="Usuario"
-                            bind:value={userlogin["9kro"]}
+                            bind:value={userlogin.user}
                             disabled={objs.user || null}
                         />
                     </div>
@@ -69,7 +66,7 @@
                             id="password"
                             class="form-control"
                             placeholder="Contraseña"
-                            bind:value={userlogin["04529f"]}
+                            bind:value={userlogin.password}
                             disabled={objs.password || null}
                         />
                     </div>
@@ -85,11 +82,17 @@
                     </div>
                 </form>
             </div>
-            <div class="col-3" />
+            <div class="col-md-3" />
         </div>
     </div>
     <div class="col-xxl-3" />
 </div>
 <ErrorModal bind:visible={modalError}>
-    {errorMessage}
+    {@html JSON.parse(errorMessage).message.replace("\n", "<br>")}
 </ErrorModal>
+
+<style>
+    .login {
+        max-width: 97%;
+    }
+</style>
