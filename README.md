@@ -1,6 +1,6 @@
-# Mokyu en Svelte
+# Emburns en Svelte
 
-Este proyecto es para re-hacer mokyu en base a un nuevo front, no es especialmente útil.
+Este proyecto es para re-hacer Emburns en base a un nuevo front, no es especialmente útil.
 
 ## Instalación
 
@@ -15,6 +15,6 @@ Este proyecto es para re-hacer mokyu en base a un nuevo front, no es especialmen
 
 ## Consideraciones
 
-Esto funciona con la futura API (que está a medias) de mokyu, a implementar JWT y demas cosas
+Esto funciona con la futura API (que está a medias) de Embers (Potato Server), a implementar JWT y demas cosas
 
-Este proyecto no incluye backend
+El backend: https://github.com/NaokiStark/Potato-Server
