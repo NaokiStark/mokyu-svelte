@@ -39,7 +39,7 @@
     <div class="col-xxl-3" />
     <div class="col-xxl-6 text-center pt-5 mx-0 px-0">
         <h3>Ingresar a Emburns</h3>
-        <p>Poné tu nombre de usuario y contraseña y eso dale man</p>
+        <p>Poné tu nombre de usuario y contraseña</p>
         <div class="row mx-0">
             <div class="col-md-3" />
             <div class="col-md-6 p-0">

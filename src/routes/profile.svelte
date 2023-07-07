@@ -5,6 +5,7 @@
     import FeedList from "../components/feedList.svelte";
     import { twiemoji as twemoji } from "../utils/twemoji.js";
     import InfiniteLoading from "svelte-infinite-loading";
+    import { getElapsed } from "../utils";
 
     import { Body } from "svelte-body"; // weird
     import { each } from "svelte/internal";
@@ -18,11 +19,11 @@
 
     $: get_user(username).then((x) => {
         item = x[0];
+        refreshInfinite();
     });
 
     $: get_stats(item).then((x) => {
         user_stats = x;
-        refreshInfinite();
     });
 
     function get_user(sid) {
@@ -33,7 +34,7 @@
         if (!sid) {
             return Promise.reject();
         }
-        return api_request(`userStats/${sid.id}`);
+        return api_request(`Users/userStats/${sid.id}`);
     }
 
     let feedList = {
@@ -136,6 +137,10 @@
                                 </b>
                             </h3>
                             <span>
+                                <!-- follow badge -->
+                                <span class="badge badge-primary">Te sigue</span
+                                >
+                                <!-- rank -->
                                 <b>{item.rankName}</b>
                                 <small class="name">({item.rank} karma) </small>
                             </span>
@@ -187,12 +192,18 @@
                 </div>
             </div>
             <!-- feedList -->
-            <FeedList {feedList} bind:site_config options={feedListOptions} />
-            <InfiniteLoading
-                spinner="wavedots"
-                on:infinite={infiniteHandler}
-                identifier={infiniteId}
-            />
+            <div class="infinite-wrapper">
+                <FeedList
+                    {feedList}
+                    bind:site_config
+                    options={feedListOptions}
+                />
+                <InfiniteLoading
+                    spinner="wavedots"
+                    on:infinite={infiniteHandler}
+                    identifier={infiniteId}
+                />
+            </div>
         {/if}
     </div>
     <div class="col-lg-3 col-xxl-3">
@@ -219,13 +230,17 @@
                                     > Siguiendo</span
                                 >
                             </div>
-                            <div class="d-flex flex-row justify-content-center">
-                                <Gicon icon="calendar_month" />&nbsp;Se
-                                unió&nbsp;
-                                <b title={item.created}
-                                    >{item.created_elapsed}</b
+                            {#if item}
+                                <div
+                                    class="d-flex flex-row justify-content-center"
                                 >
-                            </div>
+                                    <Gicon icon="calendar_month" />&nbsp;Se
+                                    unió&nbsp;
+                                    <b title={item.created}
+                                        >{getElapsed(item.created)}</b
+                                    >
+                                </div>
+                            {/if}
                         </div>
                     {:else}
                         <p class="card-text placeholder-wave">
@@ -241,42 +256,28 @@
                     {/if}
                 </div>
             </div>
-
-            <div class="card mt-2">
-                <div class="card-header">
-                    <Gicon icon="military_tech" /> Medallas
-                </div>
-                <div class="card-body d-flex flex-row flex-wrap">
-                    <div
-                        class="medal d-flex flex-column flex-wrap text-center"
-                        title="Es parte del Dev team!"
-                    >
-                        <span class="medal-icon text-center">
-                            <Gicon icon="code" />
-                        </span>
-                        <span>Dev</span>
+            {#if user_stats}
+                {#if user_stats.userBadges.length > 0}
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <Gicon icon="military_tech" /> Medallas
+                        </div>
+                        <div class="card-body d-flex flex-row flex-wrap">
+                            {#each user_stats.userBadges as badge}
+                                <div
+                                    class="medal d-flex flex-column flex-wrap text-center cursor-pointer"
+                                    title={badge.description}
+                                >
+                                    <span class="medal-icon text-center">
+                                        <Gicon icon={badge.icon} />
+                                    </span>
+                                    <span>{badge.title}</span>
+                                </div>
+                            {/each}
+                        </div>
                     </div>
-                    <div
-                        class="medal d-flex flex-column flex-wrap text-center"
-                        title="Es parte del programa de limpieza de errores"
-                    >
-                        <span class="medal-icon text-center">
-                            <Gicon icon="bug_report" />
-                        </span>
-                        <span>Debugger</span>
-                    </div>
-                    <div
-                        class="medal d-flex flex-column flex-wrap text-center"
-                        title="Es la gorra"
-                    >
-                        <span class="medal-icon text-center">
-                            <Gicon icon="local_police" />
-                        </span>
-                        <span>Mod</span>
-                    </div>
-                </div>
-            </div>
-
+                {/if}
+            {/if}
             <div class="card mt-2">
                 <div class="card-header">
                     <Gicon icon="feed" /> Últimos Temas
@@ -284,19 +285,28 @@
                 <div class="card-body">
                     <ul class="last-posts">
                         {#if user_stats}
-                            {#each user_stats.lastposts as post}
+                            {#if user_stats.length > 0}
+                                {#each user_stats.lastposts as post}
+                                    <li class="d-flex" use:twemoji>
+                                        <span title={post.category_name}>
+                                            {post.category_icon}
+                                        </span>
+                                        <span
+                                            class="post-title ml-1"
+                                            title={post.title}
+                                        >
+                                            {post.title}
+                                        </span>
+                                    </li>
+                                {/each}
+                            {:else}
                                 <li class="d-flex" use:twemoji>
-                                    <span title={post.category_name}>
-                                        {post.category_icon}
-                                    </span>
-                                    <span
-                                        class="post-title ml-1"
-                                        title={post.title}
-                                    >
-                                        {post.title}
+                                    <span title="Vacío"> 🏜️ </span>
+                                    <span class="post-title text-muted ml-1">
+                                        Esto está vacío y no está implementado.
                                     </span>
                                 </li>
-                            {/each}
+                            {/if}
                         {:else}
                             <p class="card-text placeholder-wave">
                                 <li

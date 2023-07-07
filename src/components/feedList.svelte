@@ -82,7 +82,3 @@
         </Masonry>
     {/if}
 </div>
-<ShoutView
-    bind:visible={preview_modal_visible}
-    bind:shout_id={item_selected_id}
-/>

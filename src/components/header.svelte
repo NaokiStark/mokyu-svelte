@@ -1,6 +1,6 @@
 <script>
     import Gicon from "./gicon.svelte";
-    import { link, useLocation } from "svelte-navigator";
+    import { link, navigate, useLocation } from "svelte-navigator";
     import { backendRoot } from "../api.js";
     import { fly, fade } from "svelte/transition";
 
@@ -8,6 +8,7 @@
 
     const location = useLocation();
     let actual_location = $location;
+    let search_input = "";
 
     let toggle_visible_menu = false;
 
@@ -69,7 +70,6 @@
                     </a>
                 </li>
 
-                <!--
                 <li class="nav-item">
                     <a
                         use:link
@@ -82,14 +82,34 @@
                         <Gicon icon="workspaces_filled" /> Comunidades
                     </a>
                 </li>
-                -->
+
+                {#if user_data}
+                    <li class="nav-item">
+                        <a
+                            use:link
+                            class="nav-link {location_contains('notificaciones')
+                                ? 'active'
+                                : ''}"
+                            aria-current="page"
+                            href="/notificaciones"
+                        >
+                            <Gicon icon="notifications" /> Notificaciones
+                        </a>
+                    </li>
+                {/if}
+
                 <li class="nav-item d-flex d-lg-none">
-                    <form class="d-flex">
+                    <form
+                        class="d-flex"
+                        on:submit|preventDefault={() =>
+                            navigate(`/buscar/${search_input}`)}
+                    >
                         <input
                             class="form-control me-2"
                             type="search"
                             placeholder="Buscar"
                             aria-label="Search"
+                            bind:value={search_input}
                         />
                         <button class="btn btn-outline-primary" type="submit"
                             ><Gicon icon="search" />
@@ -150,12 +170,16 @@
                 {/if}
             </ul>
         </div>
-        <form class="d-none d-lg-flex">
+        <form
+            class="d-none d-lg-flex"
+            on:submit|preventDefault={() => navigate(`/buscar/${search_input}`)}
+        >
             <input
                 class="form-control me-2"
                 type="search"
                 placeholder="Buscar"
                 aria-label="Search"
+                bind:value={search_input}
             />
             <button class="btn btn-outline-primary" type="submit"
                 ><Gicon icon="search" />

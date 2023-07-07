@@ -62,6 +62,20 @@
         }
         return reactors;
     }
+
+    function refreshEmojis() {
+        if (item) {
+            reactionsCount = {};
+            for (let a = 0; a < item.lovesList.length; a++) {
+                let element = item.lovesList[a];
+                if (!reactionsCount[element.reaction.reactionEmoji]) {
+                    reactionsCount[element.reaction.reactionEmoji] = 1;
+                } else {
+                    reactionsCount[element.reaction.reactionEmoji] += 1;
+                }
+            }
+        }
+    }
 </script>
 
 <div class="card my-2">
@@ -88,7 +102,8 @@
         {/if}
         <div class="d-flex flex-column">
             <span class="user-info">
-                <a use:link href="/{item.user.username}">{item.user.username}</a
+                <a use:link class="link-primary" href="/{item.user.username}"
+                    >{item.user.username}</a
                 >
                 {#if item.parentUser}
                     <small>
@@ -150,7 +165,7 @@
             {/if}
         {/if}
     </div>
-    <div class="card-footer d-flex justify-content-between ">
+    <div class="card-footer d-flex justify-content-between">
         {#if item.comments.length}
             <a use:link href="/shout/{item.id}">
                 <Gicon
@@ -170,7 +185,7 @@
                 0
             </a>
         {/if}
-        <div class="d-flex justify-content-between ">
+        <div class="d-flex justify-content-between">
             <div class="users-reactions d-flex flex-row">
                 {#each Object.entries(reactionsCount) as [emoji, count]}
                     <span
@@ -200,7 +215,11 @@
     {#if reactionsBoxOpen && site_config}
         <ReactionsBox
             bind:reaction_list={site_config.reactions}
-            on:selected={() => (reactionsBoxOpen = !reactionsBoxOpen)}
+            on:selected={() => {
+                reactionsBoxOpen = !reactionsBoxOpen;
+                refreshEmojis();
+            }}
+            bind:feed={item}
         />
     {/if}
 </div>

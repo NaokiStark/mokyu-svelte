@@ -1,5 +1,5 @@
 <script>
-	import { Router, Link, Route } from "svelte-navigator";
+	import { Router, Route } from "svelte-navigator";
 	import Header from "./components/header.svelte";
 	import Login from "./routes/login.svelte";
 	import Mi from "./routes/mi.svelte";
@@ -7,14 +7,14 @@
 	import Register from "./routes/register.svelte";
 	import Profile from "./routes/profile.svelte";
 	import { api_request, checkLogin } from "./api.js";
-
-	import { Body } from "svelte-body"; // weird
 	import { onMount } from "svelte";
 	import Posts from "./routes/posts.svelte";
 	import Communities from "./routes/communities.svelte";
 	import Community from "./routes/community.svelte";
 	import Post from "./routes/post.svelte";
 	import Explore from "./routes/Explore.svelte";
+	import { Body } from "svelte-body"; // weird
+	import Notificaciones from "./routes/notificaciones.svelte";
 
 	const site_name = "Emburns";
 
@@ -62,11 +62,6 @@
 		<Route path="/">
 			<Header bind:user_data />
 
-			<!-- more weirdest-->
-			<Body
-				style="background: {site_background};background-size: cover;background-position: center;"
-			/>
-
 			{#if user_data}
 				<Mi {site_config} bind:user_data />
 			{:else}
@@ -77,30 +72,18 @@
 		<Route path="/explorar">
 			<Header bind:user_data />
 
-			<!-- more weirdest-->
-			<Body
-				style="background: {site_background};background-size: cover;background-position: center;"
-			/>
-			<Explore {site_config} bind:user_data />
+			<Explore {site_config} bind:user_data search={false} />
 		</Route>
 
 		<Route path="login">
 			<Header bind:user_data />
 
-			<!-- more weirdest-->
-			<Body
-				style="background: {site_background};background-size: cover;background-position: center;"
-			/>
 			<Login {site_config} />
 		</Route>
 
 		<Route path="register">
 			<Header bind:user_data />
 
-			<!-- more weirdest-->
-			<Body
-				style="background: {site_background};background-size: cover;background-position: center;"
-			/>
 			<Register {site_config} />
 		</Route>
 
@@ -113,9 +96,6 @@
 		<Route path="posts">
 			<Header bind:user_data />
 
-			<Body
-				style="background: {site_background};background-size: cover;background-position: center;"
-			/>
 			<Posts bind:site_config />
 		</Route>
 
@@ -127,9 +107,6 @@
 		<Route path="comunidades">
 			<Header bind:user_data />
 
-			<Body
-				style="background: {site_background};background-size: cover;background-position: center;"
-			/>
 			<Communities bind:site_config />
 		</Route>
 
@@ -144,6 +121,22 @@
 			<Post post_id={params.id} bind:site_config />
 		</Route>
 
+		<Route path="buscar/:search" let:params>
+			<Header bind:user_data />
+
+			<Explore
+				{site_config}
+				bind:user_data
+				search={true}
+				search_query={params.search}
+			/>
+		</Route>
+
+		<Route path="notificaciones" let:params>
+			<Header bind:user_data />
+
+			<Notificaciones {site_config} bind:user_data />
+		</Route>
 		<Route path="/:id" let:params>
 			<Header bind:user_data />
 
@@ -218,6 +211,10 @@
 
 	:global(a:hover) {
 		text-decoration: none !important;
+	}
+
+	:global(.link-primary) {
+		color: rgb(252, 107, 71) !important;
 	}
 
 	:global(.text-link, .text-link:hover, .text-link:active, .text-link:focus) {

@@ -10,7 +10,7 @@
     <div class="col-xxl-3" />
     <div class="col-xxl-6 text-center pt-5 mx-0 px-0">
         <h3>Registro a Emburns</h3>
-        <p>Poné tus datos que no vamos a hacer nada con eso, dale man</p>
+        <p>Poné tus datos para registrarte</p>
         <div class="row mx-0">
             <div class="col-md-3 m-0 p-0" />
             <div class="col-md-6 p-0">

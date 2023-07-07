@@ -37,6 +37,10 @@
         sharebox: user_data ? true : false,
         show_3x3: false,
     };
+
+    $: {
+        commentListOptions.sharebox = user_data ? true : false;
+    }
 </script>
 
 {#if item}
@@ -53,10 +57,11 @@
         {#if item}
             <FeedItem {item} bind:site_config />
             <CommentsList
-                feedList={{ data: item.comments }}
+                bind:feedList={item.comments}
                 bind:site_config
                 bind:user_data
                 bind:options={commentListOptions}
+                bind:feedId={shout_id}
             />
         {:else}
             <FeedItemPlaceholder />
@@ -130,7 +135,9 @@
                                 <li>
                                     <a
                                         class="text-link"
-                                        href="/buscar/{hashtag}"
+                                        href="/buscar/{encodeURIComponent(
+                                            hashtag
+                                        )}"
                                     >
                                         {hashtag}
                                     </a>

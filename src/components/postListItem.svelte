@@ -1,13 +1,14 @@
 <script>
     import { link } from "svelte-navigator";
+    import { getElapsed } from "../utils";
 
     export let post;
 </script>
 
 {#if post}
-    <a use:link href="/tema/{post.post_id}">
+    <a use:link href="/tema/{post.id}" class="post-item">
         <span
-            style="background: url('{post.post_caption}') no-repeat"
+            style="background: url('{post.caption}') no-repeat"
             class="post-thumbnail"
         />
         <div class="d-flex flex-column ml-1 post-details">
@@ -15,14 +16,16 @@
                 <b> {post.title} </b>
             </span>
             <small class="text-muted-alt"
-                >Creado por @<span class="text-muted-alt-alt">{post.user}</span>
-                {post.elapsed} en
-                <span class="badge badge-primary">{post.community_name}</span>
+                >Creado por @<span class="text-muted-alt-alt"
+                    >{post.user.username}</span
+                >
+                {getElapsed(post.created)} en
+                <span class="badge badge-primary">{post.community.name}</span>
             </small>
             <span class="text-muted-alt">
                 <span class="badge badge-primary">
-                    {post.category_icon}
-                    {post.category_name}
+                    {post.community.category.icon}
+                    {post.community.category.name}
                 </span>
             </span>
         </div>
@@ -47,7 +50,10 @@
 
 <style>
     .post-details {
-        max-width: 75%;
+        max-width: 100%;
+    }
+    .post-item {
+        width: 100%;
     }
     .post-thumbnail {
         display: inline-block;
@@ -81,7 +87,11 @@
             margin-bottom: 0.5em;
         }
         .post-details {
-            max-width: 100%;
+            /*max-width: 61%;*/
+        }
+        .post-item {
+            flex-direction: column;
+            width: 100%;
         }
     }
 </style>

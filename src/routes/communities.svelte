@@ -28,35 +28,37 @@
     }
 
     function infiniteHandler({ detail: { loaded, complete } }) {
-        api_request(`communitiesFeed?limit=10&page=${page}`).then((x) => {
-            if (x.data.length > 0) {
-                post_list = [...post_list, ...x.data];
-                page += 1;
-                loaded();
-            } else {
-                complete();
+        api_request(`community/posts?community=0&limit=10&page=${page}`).then(
+            (x) => {
+                if (x.length > 0) {
+                    post_list = [...post_list, ...x];
+                    page += 1;
+                    loaded();
+                } else {
+                    complete();
+                }
             }
-        });
+        );
     }
 </script>
 
 <div class="row row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
-    <div class="col-md-1" />
-    <div class="col-md-10">
+    <div class="col-lg-1 col-xl-2" />
+    <div class="col-lg-5 col-xl-5 mt-2 mx-0 px-0">
         <div class="card mt-2">
             <div class="card-header">
                 <b><Gicon icon="info" /> Info</b>
             </div>
             <div class="card-body">
-                <Gicon icon="info" /> Ya se pueden ver los temas y recorrer comunidades!
-                <Gicon icon="info" />
+                Las comunidades son una forma de interactuar colaborativa. Podés
+                navegar, interactuar o crear tu comunidad!
             </div>
         </div>
     </div>
 </div>
 <div class="row row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
-    <div class="col-md-1" />
-    <div class="col-md-6 mb-3">
+    <div class="col-lg-1 col-xl-2" />
+    <div class="col-lg-5 col-xl-5 mt-2 mx-0 px-0">
         <div class="card mt-2">
             <div class="card-header">
                 <b><Gicon icon="newspaper" /> Últimos temas</b>
@@ -70,16 +72,16 @@
                             </li>
                         {/each}
                     {/if}
+                    <InfiniteLoading
+                        spinner="wavedots"
+                        on:infinite={infiniteHandler}
+                        identifier={infiniteId}
+                    />
                 </ul>
             </div>
         </div>
-        <InfiniteLoading
-            spinner="wavedots"
-            on:infinite={infiniteHandler}
-            identifier={infiniteId}
-        />
     </div>
-    <div class="col-md-4">
+    <div class="col-lg-3 col-xl-3">
         <div class="card mt-2">
             <div class="card-header">
                 <b><Gicon icon="hotel_class" /> Comunidades destacadas</b>

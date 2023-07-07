@@ -35,7 +35,8 @@
         />
         <div class="d-flex flex-column">
             <span class="user-info">
-                <a use:link href="/{item.user.username}">{item.user.username}</a
+                <a use:link class="link-primary" href="/{item.user.username}"
+                    >{item.user.username}</a
                 >
             </span>
             <small class="date">
@@ -77,7 +78,7 @@
             {/if}
         {/if}
     </div>
-    <div class="card-footer d-flex justify-content-between ">
+    <div class="card-footer d-flex justify-content-between">
         {#if item.comments_count}
             <a use:link href="/shout/{item.postid}#comment-{item.id}">
                 <Gicon

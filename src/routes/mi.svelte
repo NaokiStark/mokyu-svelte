@@ -35,7 +35,7 @@
 */
 
     function infiniteHandler({ detail: { loaded, complete } }) {
-        api_request(`Feed/list?page=${page}`).then((x) => {
+        api_request(`Feed/newsfeed?page=${page}`).then((x) => {
             if (x.length > 0) {
                 feedList.data = [...feedList.data, ...x];
                 page += 1;
@@ -56,33 +56,38 @@
         <InfiniteLoading spinner="wavedots" on:infinite={infiniteHandler} />
     </div>
     <div class="col-lg-3 col-xl-3">
-        <div class="card mt-2">
-            <div class="card-header">
-                <Gicon icon="tag" /> Tendencias
-            </div>
+        <div class="sticky-top">
+            <div class="card mt-2">
+                <div class="card-header">
+                    <Gicon icon="tag" /> Tendencias
+                </div>
 
-            <div class="card-body">
-                <ul class="hashtags-container">
-                    {#each hashtags as hashtag}
-                        <li>
-                            <a class="text-link" href="/buscar/{hashtag}">
-                                {hashtag}
-                            </a>
-                        </li>
-                    {/each}
-                </ul>
+                <div class="card-body">
+                    <ul class="hashtags-container">
+                        {#each hashtags as hashtag}
+                            <li>
+                                <a
+                                    class="text-link"
+                                    href="/buscar/{encodeURIComponent(hashtag)}"
+                                >
+                                    {hashtag}
+                                </a>
+                            </li>
+                        {/each}
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="card mt-2">
-            <div class="card-header">
-                <Gicon icon="tips_and_updates" /> Te puede interesar
-            </div>
-            <div class="card-body">
-                <img
-                    src="https://media.tenor.com/Ecad-WCJg7oAAAAC/vamos-manaos-manaos.gif"
-                    alt="manaos"
-                    class="img-fluid"
-                />
+            <div class="card mt-2">
+                <div class="card-header">
+                    <Gicon icon="tips_and_updates" /> Te puede interesar
+                </div>
+                <div class="card-body">
+                    <img
+                        src="https://media.tenor.com/Ecad-WCJg7oAAAAC/vamos-manaos-manaos.gif"
+                        alt="manaos"
+                        class="img-fluid"
+                    />
+                </div>
             </div>
         </div>
     </div>

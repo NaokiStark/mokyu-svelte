@@ -9,6 +9,7 @@
     import { Body } from "svelte-body"; // weird
     import { each } from "svelte/internal";
     import { link } from "svelte-navigator";
+    import { getElapsed } from "../utils.js";
     export let site_config;
 
     export let commid;
@@ -20,11 +21,11 @@
     let page = 0;
 
     $: get_community(commid).then((x) => {
-        item = x.data;
+        item = x;
     });
 
     function get_community(sid) {
-        return api_request(`community/${sid}`);
+        return api_request(`community/${sid}?withMembers=true`);
     }
 
     let infiniteId = Symbol();
@@ -34,17 +35,17 @@
         infiniteId = Symbol();
     }
     function infiniteHandler({ detail: { loaded, complete } }) {
-        api_request(`communityFeed/${commid}?limit=10&page=${page}`).then(
-            (x) => {
-                if (x.data.length > 0) {
-                    post_list = [...post_list, ...x.data];
-                    page += 1;
-                    loaded();
-                } else {
-                    complete();
-                }
+        api_request(
+            `community/posts?community=${commid}&limit=10&page=${page}`
+        ).then((x) => {
+            if (x.length > 0) {
+                post_list = [...post_list, ...x];
+                page += 1;
+                loaded();
+            } else {
+                complete();
             }
-        );
+        });
     }
 </script>
 
@@ -56,8 +57,8 @@
     {/if}
 {/if}
 <div class="row mx-0" in:fly={{ opacity: 0, y: 50, duration: 300 }}>
-    <div class="col-lg-1" />
-    <div class="col-lg-7 mt-2 mx-0 px-0">
+    <div class="col-lg-1 col-xl-2" />
+    <div class="col-lg-5 col-xl-5 mt-2 mx-0 px-0">
         {#if item}
             <div class="card mt2">
                 <div
@@ -140,7 +141,7 @@
             </div>
         {/if}
     </div>
-    <div class="col-lg-3">
+    <div class="col-lg-3 col-xl-3">
         <div class="sticky-top">
             <div class="card mt-2">
                 <div class="card-header">
@@ -155,9 +156,9 @@
                             <div class="d-flex flex-row justify-content-evenly">
                                 <span>
                                     <Gicon icon="chevron_right" /><b
-                                        >{item.members.length}</b
+                                        >{item.membersCount}</b
                                     >
-                                    Miembro{item.members.length > 1 ? "s" : ""}
+                                    Miembro{item.membersCount > 1 ? "s" : ""}
                                 </span>
                             </div>
 
@@ -168,12 +169,18 @@
                                     <Gicon
                                         icon="calendar_month"
                                     />&nbsp;Creada&nbsp;
-                                    <b title={item.created}>{item.created}</b>
+                                    <b title={item.created}
+                                        >{getElapsed(item.created)}</b
+                                    >
                                 </span>
                                 <span class="text-center"> por </span>
                                 <span class="text-center">
-                                    @<a use:link href="/{item.creator.user}">
-                                        {item.creator.user}
+                                    @<a
+                                        use:link
+                                        class="link-primary"
+                                        href="/{item.creator.username}"
+                                    >
+                                        {item.creator.username}
                                     </a>
                                 </span>
                             </div>
@@ -203,19 +210,22 @@
                         <div
                             class="follow-stats d-flex flex-row cursor-default"
                         >
-                            {#each item.members as member}
+                            {#each item.members.splice(0, 10) as member}
                                 <span>
-                                    <img
-                                        src={member.avatar
-                                            ? member.avatar
-                                            : "http://localhost/onics/style/default.png"}
-                                        on:error={function () {
-                                            this.src =
-                                                "http://localhost/onics/style/default.png";
-                                        }}
-                                        alt="Avatar de @{member.user}"
-                                        class="avatar rounded-circle"
-                                    />
+                                    <a use:link href="/{member.user.username}">
+                                        <img
+                                            src={member.user.avatar
+                                                ? member.user.avatar
+                                                : "http://localhost/onics/style/default.png"}
+                                            on:error={function () {
+                                                this.src =
+                                                    "http://localhost/onics/style/default.png";
+                                            }}
+                                            alt="Avatar de @{member.user
+                                                .username}"
+                                            class="avatar rounded-circle mx-1"
+                                        />
+                                    </a>
                                 </span>
                             {/each}
                         </div>
