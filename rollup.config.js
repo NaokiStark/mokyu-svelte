@@ -62,7 +62,7 @@ export default {
 		commonjs(),
 		replace({
 			//'bkndloc': production ? '//potato.fabi.pw/api/' : '//localhost/onics/api/',
-			'bkndloc': production ? '//192.168.100.6:7010/api/' : 'https://localhost:7010/api/',
+			'bkndloc': production ? '//papa.fabi.pw/api/' : 'https://localhost:7010/api/',
 			'bkndroot_': production ? '//potato.fabi.pw/' : '//localhost/onics/'
 		}),
 		// In dev mode, call `npm run start` once
