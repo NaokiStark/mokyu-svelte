@@ -2,6 +2,8 @@ const backendLocation = 'bkndloc';
 export const backendRoot = 'bkndroot_';
 export const api_request = async function (location, _method = 'get', _data = {}) {
     let headers = {};
+    let response_status = 200;
+
     if (!!localStorage.token) {
         if (localStorage.token.length > 0) {
             headers["Authorization"] = `Bearer ${localStorage.token}`;
@@ -16,6 +18,8 @@ export const api_request = async function (location, _method = 'get', _data = {}
                 headers: headers,
             }
         ).then(response => {
+            response_status = response.status;
+
             if (response.status == 200) {
                 return response.json();
             }
@@ -28,6 +32,11 @@ export const api_request = async function (location, _method = 'get', _data = {}
             return res;
         }
         else {
+            if (response_status == 401) {
+                // Unauthorized, clear storage
+                localStorage.clear();
+                window.location.reload();
+            }
             throw new Error("Ocurrió un error al solicitar los datos<br>");
         }
 
@@ -44,6 +53,7 @@ export const api_request = async function (location, _method = 'get', _data = {}
                     headers: headers,
                 }
             ).then(response => {
+                response_status = response.status;
                 if (response.status == 200) {
                     return response.json();
                 }
@@ -62,6 +72,7 @@ export const api_request = async function (location, _method = 'get', _data = {}
                     headers: headers,
                 }
             ).then(response => {
+                response_status = response.status;
                 if (response.status == 200) {
                     return response.json();
                 }
@@ -75,6 +86,11 @@ export const api_request = async function (location, _method = 'get', _data = {}
             return p;
         }
         else {
+            if (response_status == 401) {
+                // Unauthorized, clear storage
+                localStorage.clear();
+                window.location.reload();
+            }
             throw new Error("Ocurrió un error al solicitar los datos<br>");
         }
 
@@ -93,7 +109,16 @@ export const checkLogin = async function () {
     }
 
     if (localStorage.userData && localStorage.token) {
-        return true;
+        let chkLogin;
+        try {
+            chkLogin = await api_request('user/getLogin');
+
+        }
+        catch {
+            return false;
+        }
+
+        return chkLogin;
     }
     else {
         return false;

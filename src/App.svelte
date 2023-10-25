@@ -24,9 +24,10 @@
 		site_config = await api_request("site_config");
 		site_config = site_config;
 		let response_user_data = await checkLogin();
-		if (response_user_data) {
-			user_data = JSON.parse(localStorage.userData);
+		if (!!response_user_data) {
+			user_data = response_user_data;
 		}
+		document.body.classList.remove("loading");
 	});
 
 	let site = "register";
@@ -53,6 +54,12 @@
 
 	<link
 		href="https://fonts.googleapis.com/css2?family=Nunito:wght@100;400;700&display=swap"
+		rel="stylesheet"
+	/>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap"
 		rel="stylesheet"
 	/>
 </svelte:head>

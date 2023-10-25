@@ -2,6 +2,7 @@
     import Gicon from "./gicon.svelte";
     import { api_request } from "../api.js";
     import ErrorModal from "./modals/errorModal.svelte";
+    import autosize from "svelte-autosize";
 
     export let site_config;
     export let feedList = [];
@@ -52,17 +53,13 @@
             {:else}
                 <div class="fake_avatar rounded-circle mr-2" />
             {/if}
-            <div
-                class="form-control sharebox-area"
-                contenteditable="true"
-                bind:innerHTML={comment_info.text}
-                placeholder="Responde este shout"
-            />
-            <!--<textarea
+
+            <textarea
                 class="form-control"
-                placeholder="Comparte algo..."
+                placeholder="Responder shout..."
                 bind:value={comment_info.text}
-            />-->
+                use:autosize
+            />
         </div>
         <div class="sharebox-attachments d-flex flex-row mt-2">
             <button
@@ -89,7 +86,12 @@
         </div>
     </div>
     <div class="card-footer d-flex flex-row justify-content-end">
-        <button type="button" class="btn btn-primary" on:click={shout}>
+        <button
+            type="button"
+            class="btn btn-primary"
+            on:click={shout}
+            disabled={false}
+        >
             <Gicon title="Publica" icon="send" class="cursor-pointer" />
             Compartir
         </button>

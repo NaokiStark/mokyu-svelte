@@ -6,6 +6,7 @@
     import { twiemoji as twemoji } from "../utils/twemoji.js";
     import InfiniteLoading from "svelte-infinite-loading";
     import { getElapsed } from "../utils";
+    import { onMount } from "svelte";
 
     import { Body } from "svelte-body"; // weird
     import { each } from "svelte/internal";
@@ -17,13 +18,18 @@
     let item = null;
     let user_stats = null;
 
+    let loadedbefore = false;
+
     $: get_user(username).then((x) => {
         item = x[0];
-        refreshInfinite();
+
+        //refreshInfinite();
     });
 
     $: get_stats(item).then((x) => {
         user_stats = x;
+        //refreshInfinite();
+        //infiniteId = Symbol();
     });
 
     function get_user(sid) {
@@ -114,7 +120,7 @@
                             }}
                         />
                         <div
-                            class="d-flex flex-column text-white user-head-data align-items-center align-items-lg-start p-0 pl-md-2"
+                            class="mt-lg-0 mt-2 d-flex flex-column text-white user-head-data align-items-center align-items-lg-start p-0 pl-md-2"
                         >
                             <h3 class="user-info">
                                 <b>
@@ -152,7 +158,7 @@
                         <div
                             class="quote mb-3 d-flex flex-row justify-content-center justify-content-lg-start"
                         >
-                            <i>{item.quote}</i>
+                            <span>{item.quote}</span>
                         </div>
                         <div
                             class="d-flex flex-row justify-content-center justify-content-lg-end"
@@ -173,7 +179,7 @@
                                 </button>
                                 <button
                                     type="button"
-                                    class="btn btn-warning"
+                                    class="btn btn-secondary"
                                     title="Denunciar"
                                 >
                                     <Gicon icon="flag" />
@@ -193,16 +199,18 @@
             </div>
             <!-- feedList -->
             <div class="infinite-wrapper">
-                <FeedList
-                    {feedList}
-                    bind:site_config
-                    options={feedListOptions}
-                />
-                <InfiniteLoading
-                    spinner="wavedots"
-                    on:infinite={infiniteHandler}
-                    identifier={infiniteId}
-                />
+                {#if user_stats}
+                    <FeedList
+                        {feedList}
+                        bind:site_config
+                        options={feedListOptions}
+                    />
+                    <InfiniteLoading
+                        spinner="wavedots"
+                        on:infinite={infiniteHandler}
+                        identifier={infiniteId}
+                    />
+                {/if}
             </div>
         {/if}
     </div>

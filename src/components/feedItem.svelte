@@ -102,8 +102,11 @@
         {/if}
         <div class="d-flex flex-column">
             <span class="user-info">
-                <a use:link class="link-primary" href="/{item.user.username}"
-                    >{item.user.username}</a
+                <a
+                    use:link
+                    class="link-primary"
+                    href="/{item.user.username ?? 'undefined'}"
+                    >{item.user.username ?? "undefined"}</a
                 >
                 {#if item.parentUser}
                     <small>

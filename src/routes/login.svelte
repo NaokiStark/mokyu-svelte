@@ -43,7 +43,10 @@
         <div class="row mx-0">
             <div class="col-md-3" />
             <div class="col-md-6 p-0">
-                <form class="text-left login bg-dark">
+                <form
+                    class="text-left login bg-dark"
+                    on:submit|preventDefault={null}
+                >
                     <div class="mb-3">
                         <label for="username" class="form-label">Usuario</label>
                         <input

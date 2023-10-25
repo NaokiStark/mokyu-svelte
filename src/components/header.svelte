@@ -27,7 +27,7 @@
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
+    <div class="cfluid d-flex flex-row justify-content-left">
         <button
             class="navbar-toggler mr-2"
             type="button"
@@ -40,7 +40,11 @@
         >
             <span class="navbar-toggler-icon" />
         </button>
-        <a use:link class="navbar-brand" href="/">Emburns</a>
+        <a
+            use:link
+            class="navbar-brand {toggle_visible_menu ? 'hidden' : ''}"
+            href="/">Emburns</a
+        >
         <div
             class="collapse navbar-collapse {toggle_visible_menu ? 'show' : ''}"
             id="navbarSupportedContent"
@@ -70,7 +74,8 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <!-- To Be Implemented -->
+                <li class="nav-item hidden">
                     <a
                         use:link
                         class="nav-link {location_contains('comunidad') ||
@@ -223,6 +228,9 @@
 </nav>
 
 <style>
+    .cfluid {
+        width: 100%;
+    }
     .ugly-fix {
         padding-top: 2px;
     }
@@ -239,5 +247,8 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+    }
+    .navbar-brand {
+        font-family: "Fugaz One", cursive !important;
     }
 </style>
